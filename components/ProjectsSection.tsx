@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import projectsData from "@/projects.json";
 
 // TypeScript interface for project data
@@ -27,7 +27,9 @@ interface ProjectsData {
 
 const ProjectsSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [expandedProjects, setExpandedProjects] = useState<number[]>([]);
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const FEATURED_PROJECTS = (projectsData as ProjectsData).featuredProjects;
   const WEB_PROJECTS = (projectsData as ProjectsData).webProjects;
@@ -38,6 +40,44 @@ const ProjectsSection: React.FC = () => {
       : activeCategory === "featured"
       ? FEATURED_PROJECTS
       : WEB_PROJECTS;
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleProjectClick = (index: number) => {
+    if (isMobile) {
+      // Mobile: Toggle individual cards, allow multiple open
+      setExpandedProjects(prev => 
+        prev.includes(index) 
+          ? prev.filter(i => i !== index)
+          : [...prev, index]
+      );
+    }
+  };
+
+  const handleMouseEnter = (index: number) => {
+    if (!isMobile) {
+      setHoveredProject(index);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      setHoveredProject(null);
+    }
+  };
+
+  const isExpanded = (index: number) => {
+    return isMobile ? expandedProjects.includes(index) : hoveredProject === index;
+  };
 
   const getStatusLabel = (project: Project): string => {
     if (project.comingSoon) return "Coming Soon";
@@ -58,14 +98,14 @@ const ProjectsSection: React.FC = () => {
   return (
     <section
       id="projects"
-      className="relative min-h-screen bg-background py-20 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
+      className="relative min-h-screen bg-background py-12 sm:py-20 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
     >
       {/* Subtle Grid Background */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
           className="h-full w-full"
           style={{
-            backgroundImage: `linear-gradient(var(--color-cream) 1px, transparent 1px), linear-gradient(90deg, var(--color-cream) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(rgb(245, 245, 220) 1px, transparent 1px), linear-gradient(90deg, rgb(245, 245, 220) 1px, transparent 1px)`,
             backgroundSize: "80px 80px",
           }}
         />
@@ -73,37 +113,37 @@ const ProjectsSection: React.FC = () => {
 
       <div className="relative z-10 max-w-[1600px] mx-auto">
         {/* Archive Header */}
-        <div className="mb-16 md:mb-24">
-          <div className="flex items-center gap-4 mb-6">
+        <div className="mb-12 md:mb-16 lg:mb-24">
+          <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="h-px flex-1 bg-cream opacity-20" />
-            <span className="text-cream text-xs tracking-[0.3em] opacity-40">
+            <span className="text-cream text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] opacity-40">
               ARCHIVE
             </span>
             <div className="h-px flex-1 bg-cream opacity-20" />
           </div>
 
-          <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-cream leading-[0.9] tracking-tight mb-8">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-cream leading-[0.9] tracking-tight mb-6 sm:mb-8">
             SELECTED
             <br />
             <span className="inline-block mt-2 md:mt-4">WORKS</span>
           </h2>
 
-          <p className="text-base md:text-lg text-cream opacity-60 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-cream opacity-60 max-w-2xl leading-relaxed">
             A curated collection of projects spanning full-stack applications,
             web experiences, and creative explorations.
           </p>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-3 mb-12 md:mb-16">
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-10 sm:mb-12 md:mb-16">
           {["all", "featured", "web"].map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-6 py-3 text-sm font-bold tracking-wider transition-all duration-300 ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-bold tracking-wider transition-all duration-300 ${
                 activeCategory === category
                   ? "bg-cream text-background"
-                  : "border-2 border-cream text-cream hover:bg-cream hover:text-background"
+                  : "border-2 border-cream text-cream active:bg-cream active:text-background"
               }`}
             >
               {category.toUpperCase()}
@@ -116,31 +156,32 @@ const ProjectsSection: React.FC = () => {
           {allProjects.map((project, index) => (
             <div
               key={index}
-              onMouseEnter={() => setHoveredProject(index)}
-              onMouseLeave={() => setHoveredProject(null)}
-              className="group relative border-t border-cream border-opacity-10 transition-all duration-500"
+              onMouseEnter={() => handleMouseEnter(index)}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => handleProjectClick(index)}
+              className="group relative border-t border-cream border-opacity-10 transition-all duration-500 md:cursor-default cursor-pointer"
             >
-              <div className="py-6 md:py-7 grid grid-cols-12 gap-4 md:gap-6 lg:gap-8 items-center">
+              <div className="py-4 sm:py-6 md:py-7 grid grid-cols-12 gap-2 sm:gap-4 md:gap-6 lg:gap-8 items-start sm:items-center">
                 {/* Index Number */}
-                <div className="col-span-2 md:col-span-1">
-                  <span className="text-cream opacity-30 text-sm md:text-base font-mono group-hover:opacity-100 transition-opacity duration-300">
+                <div className="col-span-2 sm:col-span-2 md:col-span-1">
+                  <span className="text-cream opacity-30 text-xs sm:text-sm md:text-base font-mono group-hover:opacity-100 transition-opacity duration-300">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </div>
 
                 {/* Project Info */}
-                <div className="col-span-10 md:col-span-6 space-y-2">
-                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-cream tracking-tight group-hover:translate-x-2 transition-transform duration-300">
+                <div className="col-span-10 sm:col-span-10 md:col-span-6 space-y-1 sm:space-y-2">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-cream tracking-tight group-hover:translate-x-2 transition-transform duration-300">
                     {project.title}
                   </h3>
-                  <p className="text-sm md:text-base text-cream opacity-50">
+                  <p className="text-xs sm:text-sm md:text-base text-cream opacity-50">
                     {project.subtitle}
                   </p>
-                  <div className="flex flex-wrap gap-2 pt-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2">
                     {project.tech.slice(0, 3).map((tech, i) => (
                       <span
                         key={i}
-                        className="text-xs px-3 py-1 border border-cream border-opacity-20 text-cream opacity-60"
+                        className="text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 border border-cream border-opacity-20 text-cream opacity-60"
                       >
                         {tech}
                       </span>
@@ -149,28 +190,28 @@ const ProjectsSection: React.FC = () => {
                 </div>
 
                 {/* Year & Sector */}
-                <div className="col-span-6 md:col-span-2 space-y-1">
-                  <p className="text-cream opacity-40 text-xs tracking-wider">
+                <div className="col-span-6 sm:col-span-4 md:col-span-2 space-y-0.5 sm:space-y-1">
+                  <p className="text-cream opacity-40 text-[10px] sm:text-xs tracking-wider">
                     YEAR
                   </p>
-                  <p className="text-cream text-lg md:text-xl font-bold">
+                  <p className="text-cream text-base sm:text-lg md:text-xl font-bold">
                     {project.year}
                   </p>
                 </div>
 
-                <div className="col-span-6 md:col-span-2 space-y-1">
-                  <p className="text-cream opacity-40 text-xs tracking-wider">
+                <div className="col-span-6 sm:col-span-4 md:col-span-2 space-y-0.5 sm:space-y-1">
+                  <p className="text-cream opacity-40 text-[10px] sm:text-xs tracking-wider">
                     SECTOR
                   </p>
-                  <p className="text-cream text-sm md:text-base opacity-80">
+                  <p className="text-cream text-xs sm:text-sm md:text-base opacity-80">
                     {project.sector}
                   </p>
                 </div>
 
                 {/* Status Badge */}
-                <div className="col-span-12 md:col-span-1 flex justify-start md:justify-end">
+                <div className="col-span-12 sm:col-span-4 md:col-span-1 flex justify-start md:justify-end mt-2 sm:mt-0">
                   <span
-                    className={`text-xs px-3 py-1 font-bold tracking-wider ${getStatusStyle(
+                    className={`text-[10px] sm:text-xs px-2 sm:px-3 py-1 font-bold tracking-wider ${getStatusStyle(
                       project
                     )}`}
                   >
@@ -179,44 +220,43 @@ const ProjectsSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Hover Expansion */}
+              {/* Expansion Panel */}
               <div
                 className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  hoveredProject === index
-                    ? "max-h-[700px] opacity-100"
+                  isExpanded(index)
+                    ? "max-h-[2000px] opacity-100"
                     : "max-h-0 opacity-0"
                 }`}
               >
-                <div className="pb-8 px-4 md:px-8 lg:px-12 border-t border-cream border-opacity-10">
-                  <div className="pt-6 grid md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] gap-6 lg:gap-8">
+                <div className="pb-6 sm:pb-8 px-2 sm:px-4 md:px-8 lg:px-12 border-t border-cream border-opacity-10">
+                  <div className="pt-4 sm:pt-6 grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] gap-4 sm:gap-6 lg:gap-8">
                     {/* Project Image */}
-                    <div className="relative w-full h-[200px] md:h-[220px] lg:h-[240px] overflow-hidden border border-cream border-opacity-20 group/img">
+                    <div className="relative w-full h-[180px] sm:h-[200px] md:h-[220px] lg:h-[240px] overflow-hidden border border-cream border-opacity-20 group/img">
                       <img
-  src={project.images[0]}
-  alt={project.title}
-  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover/img:scale-105"
-/>
-
+                        src={project.images[0]}
+                        alt={project.title}
+                        className="w-full h-full object-cover object-top transition-transform duration-700 group-hover/img:scale-105"
+                      />
                       <div className="absolute inset-0 bg-cream opacity-0 group-hover/img:opacity-5 transition-opacity duration-300" />
                     </div>
 
                     {/* Project Details */}
-                    <div className="space-y-5">
-                      {/* Description - Always show */}
-                      <p className="text-cream opacity-70 text-sm md:text-base leading-relaxed">
+                    <div className="space-y-4 sm:space-y-5">
+                      {/* Description */}
+                      <p className="text-cream opacity-70 text-xs sm:text-sm md:text-base leading-relaxed">
                         {project.description}
                       </p>
 
-                      {/* Tech Stack - Show all tech */}
-                      <div className="space-y-3">
-                        <p className="text-cream opacity-50 text-xs tracking-wider font-bold uppercase">
+                      {/* Tech Stack */}
+                      <div className="space-y-2 sm:space-y-3">
+                        <p className="text-cream opacity-50 text-[10px] sm:text-xs tracking-wider font-bold uppercase">
                           Tech Stack
                         </p>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           {project.tech.map((tech, i) => (
                             <span
                               key={i}
-                              className="text-xs px-3 py-1.5 border border-cream border-opacity-30 text-cream opacity-70"
+                              className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 border border-cream border-opacity-30 text-cream opacity-70"
                             >
                               {tech}
                             </span>
@@ -224,19 +264,19 @@ const ProjectsSection: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Key Features - Only if available */}
+                      {/* Key Features */}
                       {project.features && project.features.length > 0 && (
-                        <div className="space-y-3">
-                          <p className="text-cream opacity-50 text-xs tracking-wider font-bold uppercase">
+                        <div className="space-y-2 sm:space-y-3">
+                          <p className="text-cream opacity-50 text-[10px] sm:text-xs tracking-wider font-bold uppercase">
                             Key Features
                           </p>
-                          <ul className="space-y-2">
+                          <ul className="space-y-1.5 sm:space-y-2">
                             {project.features.map((feature, i) => (
-                              <li key={i} className="flex items-start gap-3">
-                                <span className="text-cream opacity-40 mt-0.5 text-sm">
+                              <li key={i} className="flex items-start gap-2 sm:gap-3">
+                                <span className="text-cream opacity-40 mt-0.5 text-xs sm:text-sm">
                                   ▸
                                 </span>
-                                <span className="text-cream opacity-60 text-sm leading-relaxed">
+                                <span className="text-cream opacity-60 text-xs sm:text-sm leading-relaxed">
                                   {feature}
                                 </span>
                               </li>
@@ -245,25 +285,25 @@ const ProjectsSection: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Impact & Role - Only if available */}
+                      {/* Impact & Role */}
                       {(project.impact || project.responsibility) && (
-                        <div className="space-y-2 pt-2">
+                        <div className="space-y-1.5 sm:space-y-2 pt-2">
                           {project.impact && (
                             <div className="flex flex-wrap items-baseline gap-2">
-                              <span className="text-cream opacity-50 text-xs tracking-wider font-bold uppercase">
+                              <span className="text-cream opacity-50 text-[10px] sm:text-xs tracking-wider font-bold uppercase">
                                 Impact:
                               </span>
-                              <span className="text-cream opacity-70 text-sm">
+                              <span className="text-cream opacity-70 text-xs sm:text-sm">
                                 {project.impact}
                               </span>
                             </div>
                           )}
                           {project.responsibility && (
                             <div className="flex flex-wrap items-baseline gap-2">
-                              <span className="text-cream opacity-50 text-xs tracking-wider font-bold uppercase">
+                              <span className="text-cream opacity-50 text-[10px] sm:text-xs tracking-wider font-bold uppercase">
                                 Role:
                               </span>
-                              <span className="text-cream opacity-70 text-sm">
+                              <span className="text-cream opacity-70 text-xs sm:text-sm">
                                 {project.responsibility}
                               </span>
                             </div>
@@ -272,17 +312,18 @@ const ProjectsSection: React.FC = () => {
                       )}
 
                       {/* Project Links */}
-                      <div className="flex flex-wrap gap-3 pt-2">
+                      <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
                         {project.live !== "#" && !project.comingSoon && (
                           <a
                             href={project.live}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-cream text-background text-xs font-bold tracking-wider hover:opacity-90 transition-opacity duration-300"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-cream text-background text-[10px] sm:text-xs font-bold tracking-wider hover:opacity-90 transition-opacity duration-300"
                           >
                             <span>VIEW LIVE</span>
                             <svg
-                              className="w-3 h-3"
+                              className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -301,11 +342,12 @@ const ProjectsSection: React.FC = () => {
                             href={project.github}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 border-2 border-cream text-cream text-xs font-bold tracking-wider hover:bg-cream hover:text-background transition-all duration-300"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-cream text-cream text-[10px] sm:text-xs font-bold tracking-wider hover:bg-cream hover:text-background transition-all duration-300"
                           >
                             <span>GITHUB</span>
                             <svg
-                              className="w-3 h-3"
+                              className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                               fill="currentColor"
                               viewBox="0 0 24 24"
                             >
@@ -319,10 +361,10 @@ const ProjectsSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Animated Line on Hover */}
+              {/* Animated Line on Expand/Hover */}
               <div
                 className={`absolute left-0 bottom-0 h-px bg-cream transition-all duration-500 ${
-                  hoveredProject === index ? "w-full opacity-30" : "w-0"
+                  isExpanded(index) ? "w-full opacity-30" : "w-0"
                 }`}
               />
             </div>
@@ -330,9 +372,9 @@ const ProjectsSection: React.FC = () => {
         </div>
 
         {/* Archive Footer */}
-        <div className="mt-20 flex items-center gap-4">
+        <div className="mt-16 sm:mt-20 flex items-center gap-3 sm:gap-4">
           <div className="h-px flex-1 bg-cream opacity-20" />
-          <span className="text-cream text-xs tracking-[0.3em] opacity-40">
+          <span className="text-cream text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] opacity-40">
             END OF ARCHIVE
           </span>
           <div className="h-px flex-1 bg-cream opacity-20" />
@@ -342,4 +384,4 @@ const ProjectsSection: React.FC = () => {
   );
 };
 
-export default ProjectsSection
+export default ProjectsSection;
