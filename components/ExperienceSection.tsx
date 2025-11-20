@@ -7,6 +7,8 @@ interface Experience {
   period: string;
   achievements: string[];
   tech: string;
+  status: string;
+  type: string;
 }
 
 const EXPERIENCE: Experience[] = [
@@ -20,6 +22,8 @@ const EXPERIENCE: Experience[] = [
       "Built system for 1000+ daily users",
     ],
     tech: "Next.js, Tailwind CSS, REST APIs",
+    status: "ACTIVE",
+    type: "DEVELOPMENT"
   },
   {
     company: "IEEE Damietta",
@@ -31,37 +35,30 @@ const EXPERIENCE: Experience[] = [
       "Delivered high-quality graphics",
     ],
     tech: "Figma, Photoshop",
+    status: "ACTIVE",
+    type: "DESIGN"
   },
 ];
 
-const TECH_STACK: string[] = [
-  "JavaScript",
-  "TypeScript",
-  "React.js",
-  "Next.js",
-  "Tailwind CSS",
-  "Bootstrap",
-  "HTML5",
-  "CSS3",
-  "Git",
-  "GitHub",
-  "Figma",
-  "Photoshop",
-  "Prisma",
-  "PostgreSQL",
-  "Supabase",
-  "REST APIs",
-];
+const TECH_STACK = {
+  "FRONTEND": ["React.js", "Next.js", "TypeScript", "JavaScript"],
+  "STYLING": ["Tailwind CSS", "Bootstrap", "CSS3", "HTML5"],
+  "BACKEND": ["Prisma", "PostgreSQL", "Supabase", "REST APIs"],
+  "TOOLS": ["Git", "GitHub", "Figma", "Photoshop"],
+};
 
 const ExperienceSection: React.FC = () => {
   const [activeExp, setActiveExp] = useState<number | null>(null);
+  const [activeTechCategory, setActiveTechCategory] = useState<string | null>(null);
+
+  const allTechCount = Object.values(TECH_STACK).flat().length;
 
   return (
     <section
       id="experience"
-      className="relative min-h-screen bg-background py-20 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
+      className="relative min-h-screen bg-background py-24 sm:py-32 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
     >
-      {/* Subtle Grid Background */}
+ {/* Subtle Grid Background */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
           className="h-full w-full"
@@ -71,25 +68,36 @@ const ExperienceSection: React.FC = () => {
           }}
         />
       </div>
+      {/* Archive Markers */}
+      <div className="absolute top-8 sm:top-12 left-4 sm:left-6 lg:left-12 xl:left-16 text-cream opacity-20 text-[10px] tracking-[0.3em] font-mono">
+        <div>SEC.03</div>
+        <div className="mt-1 text-[8px]">————</div>
+      </div>
 
       <div className="relative z-10 max-w-[1600px] mx-auto">
         {/* Section Header */}
-        <div className="mb-16 md:mb-20">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="h-px flex-1 bg-cream opacity-20" />
-            <span className="text-cream text-xs tracking-[0.3em] opacity-40">
+        <div className="mb-20 md:mb-28">
+          <div className="flex items-center gap-3 sm:gap-4 mb-8">
+            <div className="w-8 sm:w-12 h-[1px] bg-cream opacity-30" />
+            <span className="text-cream text-[9px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
               PROFESSIONAL JOURNEY
             </span>
-            <div className="h-px flex-1 bg-cream opacity-20" />
           </div>
 
-          <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-cream leading-[0.9] tracking-tight">
+          <h2 className="text-[clamp(3rem,10vw,8rem)] font-black text-cream leading-[0.9] tracking-[-0.01em] mb-6">
             EXPERIENCE
           </h2>
+
+          <div className="flex items-center gap-3 sm:gap-4 max-w-xl">
+            <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-cream opacity-30" />
+            <p className="text-cream opacity-50 text-xs sm:text-sm font-light tracking-wide">
+              Building digital products with precision and purpose
+            </p>
+          </div>
         </div>
 
         {/* Experience Timeline */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-32">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 mb-32 sm:mb-40">
           {EXPERIENCE.map((exp, index) => (
             <div
               key={index}
@@ -98,144 +106,201 @@ const ExperienceSection: React.FC = () => {
               className="group relative"
             >
               {/* Card Container */}
-              <div
-                className={`relative border-2 border-cream border-opacity-20 p-8 md:p-10 transition-all duration-500 ${
-                  activeExp === index
-                    ? "border-opacity-60"
-                    : "hover:border-opacity-40"
-                }`}
-              >
-                {/* Corner Accent */}
-                <div
-                  className={`absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-cream transition-all duration-500 ${
-                    activeExp === index ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-                <div
-                  className={`absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 border-cream transition-all duration-500 ${
-                    activeExp === index ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-
-                {/* Number Badge */}
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-cream text-background flex items-center justify-center font-black text-xl">
-                  {String(index + 1).padStart(2, "0")}
+              <div className="relative border border-cream border-opacity-15 hover:border-opacity-30 transition-all duration-500">
+                {/* Top Archive Bar */}
+                <div className="border-b border-cream border-opacity-10 px-6 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-cream opacity-30 text-[10px] tracking-[0.2em] font-mono">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <div className="w-px h-3 bg-cream opacity-20" />
+                    <span className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono">
+                      {exp.type}
+                    </span>
+                  </div>
+                  <div className={`px-2 py-1 border border-cream ${
+                    exp.status === "ACTIVE" ? "border-opacity-40" : "border-opacity-20"
+                  }`}>
+                    <span className="text-cream opacity-60 text-[9px] tracking-[0.15em] font-mono">
+                      {exp.status}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Content */}
-                <div className="space-y-6">
+                {/* Main Content */}
+                <div className="p-6 sm:p-8 md:p-10">
                   {/* Company & Role */}
-                  <div>
-                    <h3 className="text-3xl md:text-4xl font-black text-cream tracking-tight mb-2 group-hover:translate-x-2 transition-transform duration-300">
+                  <div className="mb-6">
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-cream tracking-tight mb-3 leading-tight">
                       {exp.company}
                     </h3>
-                    <p className="text-lg md:text-xl text-cream opacity-70 font-bold">
+                    <p className="text-base sm:text-lg md:text-xl text-cream opacity-60 font-bold">
                       {exp.role}
                     </p>
                   </div>
 
-                  {/* Period */}
-                  <div className="flex items-center gap-3">
-                    <div className="h-px flex-1 bg-cream opacity-20" />
-                    <span className="text-cream opacity-50 text-sm tracking-wider font-mono">
-                      {exp.period}
-                    </span>
-                    <div className="h-px flex-1 bg-cream opacity-20" />
+                  {/* Period with Archive Style */}
+                  <div className="mb-8 pb-6 border-b border-cream border-opacity-10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1 h-1 bg-cream opacity-40" />
+                      <span className="text-cream opacity-50 text-xs sm:text-sm tracking-wider font-mono">
+                        {exp.period}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Achievements */}
-                  <ul className="space-y-3">
+                  {/* Achievements - Improved Layout */}
+                  <div className="space-y-4 mb-8">
+                    <div className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono mb-4">
+                      KEY ACHIEVEMENTS
+                    </div>
                     {exp.achievements.map((achievement, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="text-cream opacity-40 mt-1 text-lg">
-                          ◆
-                        </span>
-                        <span className="text-cream opacity-70 text-sm md:text-base leading-relaxed">
+                      <div key={i} className="flex items-start gap-4 group/item">
+                        <div className="flex-shrink-0 mt-1.5">
+                          <div className="w-1.5 h-1.5 border border-cream opacity-40 group-hover/item:opacity-100 group-hover/item:bg-cream transition-all duration-300" />
+                        </div>
+                        <span className="text-cream opacity-60 group-hover/item:opacity-80 text-sm sm:text-base leading-relaxed transition-opacity duration-300">
                           {achievement}
                         </span>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
 
-                  {/* Tech Used */}
-                  <div className="pt-4">
-                    <p className="text-cream opacity-40 text-xs tracking-wider font-bold mb-3 uppercase">
-                      Technologies
-                    </p>
-                    <p className="text-cream opacity-60 text-sm font-mono">
-                      {exp.tech}
-                    </p>
+                  {/* Tech Stack - Archive Grid Style */}
+                  <div className="pt-6 border-t border-cream border-opacity-10">
+                    <div className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono mb-4">
+                      TECH STACK
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {exp.tech.split(", ").map((t, i) => (
+                        <div 
+                          key={i}
+                          className="px-3 py-1.5 border border-cream border-opacity-20 hover:border-opacity-40 hover:bg-opacity-5 transition-all duration-300"
+                        >
+                          <span className="text-cream opacity-60 text-xs font-mono tracking-wide">
+                            {t}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
+
+                {/* Corner Accents - Only on Hover */}
+                <div className={`absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-cream transition-all duration-500 pointer-events-none ${
+                  activeExp === index ? "opacity-100" : "opacity-0"
+                }`} />
+                <div className={`absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-cream transition-all duration-500 pointer-events-none ${
+                  activeExp === index ? "opacity-100" : "opacity-0"
+                }`} />
               </div>
             </div>
           ))}
         </div>
 
-        {/* Tech Stack Section */}
+        {/* Tech Stack Section - Categorized Archive Style */}
         <div>
-          <div id="stack" className="flex items-center gap-4 mb-12">
-            <div className="h-px flex-1 bg-cream opacity-20" />
-            <span className="text-cream text-xs tracking-[0.3em] opacity-40">
-              TECHNICAL ARSENAL
-            </span>
-            <div className="h-px flex-1 bg-cream opacity-20" />
-          </div>
-
-          <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-cream leading-[0.9] tracking-tight mb-16">
-            TECH
-            <br />
-            <span className="inline-block mt-2 md:mt-4">STACK</span>
-          </h2>
-
-          {/* Tech Grid - Archive Style */}
-          <div className="relative">
-            {/* Grid Container */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-0 border-l border-t border-cream border-opacity-10">
-              {TECH_STACK.map((tech, index) => (
-                <div
-                  key={index}
-                  className="group relative border-r border-b border-cream border-opacity-10 p-6 md:p-8 flex items-center justify-center aspect-square transition-all duration-300"
-                >
-                  {/* Tech Name */}
-                  <div className="text-center">
-                    <span className="text-cream opacity-60 text-sm md:text-base font-bold tracking-wider group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 inline-block">
-                      {tech}
-                    </span>
-                  </div>
-
-                  {/* Hover Background Effect */}
-                  <div className="absolute inset-0 bg-cream opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300 pointer-events-none" />
-
-                  {/* Index Number - Shows on Hover */}
-                  <span className="absolute top-2 left-2 text-cream opacity-0 group-hover:opacity-30 text-xs font-mono transition-opacity duration-300">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-
-                  {/* Corner Accent on Hover */}
-                  <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cream opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-              ))}
+          <div className="mb-20 md:mb-28">
+            <div id="stack" className="flex items-center gap-3 sm:gap-4 mb-8">
+              <div className="w-8 sm:w-12 h-[1px] bg-cream opacity-30" />
+              <span className="text-cream text-[9px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
+                TECHNICAL ARSENAL
+              </span>
             </div>
 
-            {/* Tech Count */}
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <div className="h-px w-20 bg-cream opacity-20" />
-              <span className="text-cream opacity-40 text-xs tracking-[0.3em] font-mono">
-                {TECH_STACK.length} TECHNOLOGIES
+            <h2 className="text-[clamp(3rem,10vw,8rem)] font-black text-cream leading-[0.9] tracking-[-0.01em] mb-6">
+              TECH
+              <br />
+              <span className="inline-block mt-1 sm:mt-2 md:mt-3">STACK</span>
+            </h2>
+
+            <div className="flex items-center gap-3 sm:gap-4 max-w-xl mb-12">
+              <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-cream opacity-30" />
+              <p className="text-cream opacity-50 text-xs sm:text-sm font-light tracking-wide">
+                {allTechCount} technologies organized by category
+              </p>
+            </div>
+          </div>
+
+          {/* Categorized Tech Grid */}
+          <div className="space-y-8 sm:space-y-12">
+            {Object.entries(TECH_STACK).map(([category, techs], catIndex) => (
+              <div 
+                key={category}
+                onMouseEnter={() => setActiveTechCategory(category)}
+                onMouseLeave={() => setActiveTechCategory(null)}
+              >
+                {/* Category Header */}
+                <div className="mb-6 pb-4 border-b border-cream border-opacity-10">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-cream opacity-30 text-[10px] tracking-[0.2em] font-mono">
+                        {String(catIndex + 1).padStart(2, "0")}
+                      </span>
+                      <div className="w-px h-4 bg-cream opacity-20" />
+                      <h3 className="text-xl sm:text-2xl font-black text-cream tracking-tight">
+                        {category}
+                      </h3>
+                    </div>
+                    <span className="text-cream opacity-40 text-xs font-mono">
+                      {techs.length} {techs.length === 1 ? "ITEM" : "ITEMS"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Tech Items Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                  {techs.map((tech, techIndex) => (
+                    <div
+                      key={tech}
+                      className="group/tech relative border border-cream border-opacity-15 hover:border-opacity-40 p-4 sm:p-6 transition-all duration-300 hover:bg-opacity-[0.02]"
+                    >
+                      {/* Tech Name */}
+                      <div className="text-center">
+                        <span className="text-cream opacity-60 group-hover/tech:opacity-100 text-sm sm:text-base font-bold tracking-wide transition-all duration-300 inline-block">
+                          {tech}
+                        </span>
+                      </div>
+
+                      {/* Archive Index */}
+                      <div className="absolute top-2 left-2 flex items-center gap-1.5 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300">
+                        <span className="text-cream opacity-30 text-[9px] font-mono">
+                          {catIndex + 1}.{techIndex + 1}
+                        </span>
+                      </div>
+
+                      {/* Corner Marker */}
+                      <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-cream opacity-0 group-hover/tech:opacity-100 transition-opacity duration-300" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Tech Summary Footer */}
+          <div className="mt-16 pt-8 border-t border-cream border-opacity-10">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 border border-cream opacity-40" />
+                <span className="text-cream opacity-40 text-xs tracking-[0.2em] font-mono">
+                  TOTAL: {allTechCount} TECHNOLOGIES
+                </span>
+              </div>
+              <span className="text-cream opacity-30 text-[10px] tracking-[0.2em] font-mono">
+                LAST UPDATED: NOV 2025
               </span>
-              <div className="h-px w-20 bg-cream opacity-20" />
             </div>
           </div>
         </div>
 
         {/* Section Footer */}
-        <div className="mt-32 flex items-center gap-4">
-          <div className="h-px flex-1 bg-cream opacity-20" />
-          <span className="text-cream text-xs tracking-[0.3em] opacity-40">
+        <div className="mt-32 sm:mt-40 flex items-center gap-3 sm:gap-4">
+          <div className="h-[1px] flex-1 bg-cream opacity-20" />
+          <span className="text-cream text-[9px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
             CONTINUOUSLY EVOLVING
           </span>
-          <div className="h-px flex-1 bg-cream opacity-20" />
+          <div className="h-[1px] flex-1 bg-cream opacity-20" />
         </div>
       </div>
     </section>
