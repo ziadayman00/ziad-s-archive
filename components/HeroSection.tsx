@@ -105,11 +105,11 @@ const HeroSection = () => {
       <div className="relative z-10 w-full max-w-[1600px] py-20 sm:py-24">
         <div className="space-y-6 sm:space-y-8 md:space-y-12">
           {/* Archive Label Above Title */}
-          <div
-            className={`transition-all duration-1000 delay-100 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
+         <div
+  className={`transition-all duration-1000 delay-100 ${
+    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+  } mt-16 sm:mt-0`}
+>
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-6">
               <div className="w-6 sm:w-8 md:w-12 h-[1px] bg-[#fafbd7] opacity-40" />
               <span className="text-[#fafbd7] opacity-50 text-[9px] sm:text-[10px] md:text-xs tracking-[0.25em] sm:tracking-[0.3em] font-mono whitespace-nowrap">

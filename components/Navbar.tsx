@@ -12,9 +12,11 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      
+
       // Calculate scroll progress
-      const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const windowHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
       const scrolled = (window.scrollY / windowHeight) * 100;
       setScrollProgress(scrolled);
     };
@@ -59,7 +61,7 @@ const Navbar = () => {
       >
         {/* Scroll Progress Bar */}
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#fafbd7] opacity-10">
-          <div 
+          <div
             className="h-full bg-[#fafbd7] opacity-60 transition-all duration-150"
             style={{ width: `${scrollProgress}%` }}
           />
@@ -114,7 +116,7 @@ const Navbar = () => {
         </div>
 
         {/* Archive Header in Menu */}
-        <div className="absolute top-24 sm:top-28 left-8 right-8 flex items-center justify-between opacity-30 pointer-events-none">
+        <div className="absolute top-24 sm:top-28 left-1/2 -translate-x-1/2 w-[calc(100%-4rem)] max-w-[1200px] flex items-center justify-between opacity-30 pointer-events-none px-4 sm:px-0 pt-2 sm:pt-0">
           <div className="text-[#fafbd7] text-[10px] tracking-[0.3em] font-mono">
             <div>NAVIGATION</div>
             <div className="mt-1 text-[8px]">—————————</div>
@@ -156,26 +158,31 @@ const Navbar = () => {
                     </span>
 
                     {/* Arrow Icon */}
-                    <svg 
+                    <svg
                       className="w-5 h-5 sm:w-6 sm:h-6 text-[#fafbd7] opacity-0 group-hover:opacity-60 -translate-x-4 group-hover:translate-x-0 transition-all duration-300"
-                      fill="none" 
-                      stroke="currentColor" 
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </a>
                 </li>
               ))}
             </ul>
 
-            {/* Menu Footer Info */}
-            <div className={`mt-12 sm:mt-16 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[#fafbd7] opacity-30 text-[10px] tracking-[0.2em] font-mono transition-all duration-700 delay-500 ${
-              isMenuOpen ? "opacity-30 translate-y-0" : "opacity-0 translate-y-4"
-            }`}>
-              <span>AVAILABLE FOR WORK</span>
-              <span>•</span>
-              <span>EST. 2025</span>
+            {/* Menu Footer Info - This is now empty or removed as its content moved to absolute positioning */}
+            <div
+              className={`mt-12 sm:mt-16 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[#fafbd7] opacity-30 text-[10px] tracking-[0.2em] font-mono transition-all duration-700 delay-500 ${
+                isMenuOpen ? "opacity-0" : "opacity-0"
+              }`}
+            >
+              {/* Removed original content */}
             </div>
           </div>
         </div>
@@ -198,6 +205,17 @@ const Navbar = () => {
               />
             ))}
           </div>
+        </div>
+
+        {/* NEW: Available for Work & EST. 2025 (Combined) - Placed just above Archive Footer */}
+        <div
+          className={`absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 flex items-center justify-center gap-4 sm:gap-6 text-[#fafbd7] opacity-30 text-[10px] tracking-[0.2em] font-mono transition-all duration-700 delay-500 whitespace-nowrap ${
+            isMenuOpen ? "opacity-30 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+        >
+          <span>AVAILABLE FOR WORK</span>
+          <span>•</span>
+          <span>EST. 2025</span>
         </div>
 
         {/* Archive Footer */}
