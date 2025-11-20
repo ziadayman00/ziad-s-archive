@@ -26,9 +26,7 @@ export const metadata: Metadata = {
   },
   description: "Creating clean, interactive, and motion-driven web experiences.",
   icons: {
-    icon: "/icon.svg", // Fallback favicon
-    shortcut: "/favicon.ico", // For older browsers
-    apple: "/apple-touch-icon.png", // For iPhones/iPads
+    icon: "/icon.svg", // Use only this SVG favicon
   },
   openGraph: {
     title: "Ziad's Archive",
@@ -62,13 +60,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* Ensure proper favicon and Apple touch icon */}
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* Loader for portfolio */}
         <PortfolioLoader />
         <Navbar />
         <main>{children}</main>
