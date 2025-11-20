@@ -13,7 +13,7 @@ const HeroSection = () => {
   useEffect(() => {
     setIsVisible(true);
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: any) => {
       // Throttle mouse movement for performance
       requestAnimationFrame(() => {
         setMousePosition({
