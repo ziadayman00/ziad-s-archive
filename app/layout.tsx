@@ -19,23 +19,25 @@ const geistMono = Geist_Mono({
 
 // SEO-friendly metadata
 export const metadata: Metadata = {
-  metadataBase: new URL("https://your-domain.com"),
+  metadataBase: new URL("https://ziad-s-archive.vercel.app"),
   title: {
     default: "Ziad's Archive",
     template: "%s | Ziad's Archive",
   },
   description: "Creating clean, interactive, and motion-driven web experiences.",
   icons: {
-    icon: "/icon.svg", // favicon
+    icon: "/icon.svg", // Fallback favicon
+    shortcut: "/favicon.ico", // For older browsers
+    apple: "/apple-touch-icon.png", // For iPhones/iPads
   },
   openGraph: {
     title: "Ziad's Archive",
     description: "Creating clean, interactive, and motion-driven web experiences.",
-    url: "https://your-domain.com",
+    url: "https://ziad-s-archive.vercel.app",
     siteName: "Ziad's Archive",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "https://ziad-s-archive.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Ziad's Archive",
@@ -47,18 +49,29 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ziad's Archive",
     description: "Creating clean, interactive, and motion-driven web experiences.",
-    images: ["/og-image.png"],
+    images: ["https://ziad-s-archive.vercel.app/og-image.png"],
   },
+  alternates: {
+    canonical: "https://ziad-s-archive.vercel.app",
+  },
+  viewport: "width=device-width, initial-scale=1",
 };
 
 // Root Layout Component
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* Ensure proper favicon and Apple touch icon */}
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <PortfolioLoader/>
+        {/* Loader for portfolio */}
+        <PortfolioLoader />
         <Navbar />
-        {children}
+        <main>{children}</main>
         <Footer />
       </body>
     </html>
