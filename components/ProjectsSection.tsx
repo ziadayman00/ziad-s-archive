@@ -122,7 +122,7 @@ const ProjectsSection: React.FC = () => {
       </div>
 
       {/* Archive Markers */}
-      <div className="absolute top-28 sm:top-32 left-4 sm:left-6 lg:left-12 xl:left-16 text-cream opacity-20 text-[10px] tracking-[0.3em] font-mono">
+      <div className="absolute top-8 sm:top-12 left-4 sm:left-6 lg:left-12 xl:left-16 text-cream opacity-20 text-[10px] tracking-[0.3em] font-mono">
         <div>SEC.02</div>
         <div className="mt-1 text-[8px]">————</div>
       </div>
