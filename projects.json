@@ -1,6 +1,33 @@
 {
   "featuredProjects": [
     {
+      "title": "Workflow",
+      "subtitle": "Team Collaboration Platform",
+      "year": "2025",
+      "sector": "Full-Stack",
+      "responsibility": "Development, UI/UX, Architecture",
+      "impact": "Real-time team management and task tracking",
+      "tech": ["Next.js", "Prisma", "PostgreSQL", "TypeScript", "Tailwind CSS"],
+      "description": "A comprehensive team collaboration and project management platform featuring real-time task tracking, kanban boards, and team management. Built with modern technologies to streamline workflow and boost productivity for teams of all sizes.",
+      "features": [
+        "Drag-and-drop Kanban boards",
+        "Real-time collaboration and updates",
+        "Team management with role-based permissions",
+        "Smart task tracking with priorities and due dates",
+        "Activity feed and @mentions"
+      ],
+      "images": [
+        "/assets/workflow1.png",
+        "/assets/workflow2.png",
+        "/assets/workflow3.png",
+        "/assets/workflow4.png"
+      ],
+      "live": "https://workflow-tawny.vercel.app/",
+      "github": "https://github.com/ziadayman00/workflow",
+      "comingSoon": false,
+      "inProgress": true
+    },
+    {
       "title": "Listed",
       "subtitle": "AI-Powered Task Management",
       "year": "2025",

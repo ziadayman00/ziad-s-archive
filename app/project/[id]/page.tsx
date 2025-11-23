@@ -17,7 +17,7 @@ export default async function ProjectPage({ params }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-cream selection:bg-cream selection:text-background">
       {/* Navigation */}
-      <nav className="fixed top-24 left-0 right-0 z-40 px-6 flex justify-between items-center mix-blend-difference">
+      <nav className="fixed top-30 left-0 right-0 z-40 px-6 flex justify-between items-center mix-blend-difference">
         <Link 
           href="/"
           className="text-sm font-mono tracking-[0.2em] opacity-70 hover:opacity-100 transition-opacity"
@@ -27,7 +27,7 @@ export default async function ProjectPage({ params }: PageProps) {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 lg:px-12 max-w-[1600px] mx-auto">
+      <section className="relative pt-40 pb-20 px-6 lg:px-12 max-w-[1600px] mx-auto">
         <div className="space-y-6">
           <div className="flex items-center gap-4 text-xs font-mono tracking-[0.2em] opacity-50">
             <span>{project.year}</span>
