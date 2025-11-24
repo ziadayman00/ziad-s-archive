@@ -93,7 +93,7 @@ export default function PortfolioLoader() {
   const currentPhaseData = phases.find(p => p.name === currentPhase);
 
   return (
-    <div className={`fixed inset-0 z-150 bg-[#001b24] transition-opacity duration-700 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+    <div className={`fixed inset-0 z-[200] bg-[#001b24] transition-opacity duration-700 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
       
       {/* Grid Background */}
       <div className="absolute inset-0" style={{ opacity: 0.03 }}>

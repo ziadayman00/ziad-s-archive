@@ -48,14 +48,6 @@ const HeroSection = () => {
       ref={heroRef}
       className="relative min-h-screen flex items-center mt-6 justify-center overflow-hidden bg-[#001b24] px-4 sm:px-6 lg:px-12 xl:px-16"
     >
-      {/* Animated Scanline Effect */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-10"
-        style={{
-          background: `linear-gradient(180deg, transparent ${scanlinePosition}%, #fafbd7 ${scanlinePosition + 0.1}%, transparent ${scanlinePosition + 0.2}%)`,
-        }}
-      />
-
       {/* Subtle Grid Background with Fade */}
       <div className="absolute inset-0 opacity-[0.04]">
         <div
@@ -132,10 +124,9 @@ const HeroSection = () => {
               <br />
               <span className="inline-block mt-1 sm:mt-2 md:mt-3 relative">
                 CREATIVE
-                <span className="absolute left-0 -bottom-0.5 sm:-bottom-1 w-full h-[1px] sm:h-[2px] bg-gradient-to-r from-[#fafbd7] to-transparent opacity-20" />
               </span>
               <br />
-              <span className="inline-block mt-1 sm:mt-2 md:mt-3 bg-gradient-to-r from-[#fafbd7] via-[#fafbd7] to-[#001b24] text-transparent bg-clip-text animate-gradient">
+              <span className="inline-block mt-1 sm:mt-2 md:mt-3 text-cream ">
                 EXPERIENCES
               </span>
             </h1>

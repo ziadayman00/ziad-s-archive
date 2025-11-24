@@ -53,7 +53,7 @@ const Navbar = () => {
     <>
       {/* Main Navbar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-100 transition-all duration-300 px-4 sm:px-6 lg:px-12 xl:px-16 ${
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 px-4 sm:px-6 lg:px-12 xl:px-16 ${
           isScrolled
             ? "bg-[#001b24] bg-opacity-95 backdrop-blur-sm py-4"
             : "bg-transparent py-6"
@@ -98,7 +98,7 @@ const Navbar = () => {
 
       {/* Fullscreen Menu Overlay */}
       <div
-        className={`fixed inset-0 z-80 bg-[#001b24] transition-all duration-500 ease-in-out ${
+        className={`fixed inset-0 z-[90] bg-[#001b24] transition-all duration-500 ease-in-out ${
           isMenuOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
