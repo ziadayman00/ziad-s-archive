@@ -60,7 +60,7 @@ const Navbar = () => {
         }`}
       >
         {/* Scroll Progress Bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#e8e6e0] opacity-10">
+        <div className={`absolute bottom-0 left-0 right-0 h-[1px] opacity-10 transition-colors duration-300 ${isMenuOpen ? 'bg-transparent' : 'bg-[#e8e6e0]'}`}>
           <div
             className="h-full bg-[#e8e6e0] opacity-60 transition-all duration-150"
             style={{ width: `${scrollProgress}%` }}
