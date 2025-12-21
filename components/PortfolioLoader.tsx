@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 
 // --- 1. Define Types for Data Structures ---
@@ -16,9 +17,12 @@ interface LoadingItem {
 
 // --- 2. Main Component ---
 export default function PortfolioLoader() {
-  // Use explicit types for useState
+  const pathname = usePathname();
+  
+  // Use explicit types for useState - ALL HOOKS MUST BE CALLED FIRST
   const [progress, setProgress] = useState<number>(0);
   const [isComplete, setIsComplete] = useState<boolean>(false);
+  const [shouldShow, setShouldShow] = useState<boolean>(false);
   const [currentPhase, setCurrentPhase] = useState<Phase['name']>('initializing');
   const [loadingItems, setLoadingItems] = useState<LoadingItem[]>([]);
 
@@ -47,8 +51,22 @@ export default function PortfolioLoader() {
     'FINALIZING SETUP'
   ];
 
+  // Check if loader should show (only once per session)
+  useEffect(() => {
+    const hasShownLoader = sessionStorage.getItem('portfolioLoaderShown');
+    
+    if (!hasShownLoader && pathname === '/') {
+      setShouldShow(true);
+      sessionStorage.setItem('portfolioLoaderShown', 'true');
+    } else {
+      setIsComplete(true); // Skip loader if already shown
+    }
+  }, [pathname]);
+
   // --- 3. useEffect for Progress (Faster: 30ms) ---
   useEffect(() => {
+    if (!shouldShow) return;
+
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
@@ -58,13 +76,15 @@ export default function PortfolioLoader() {
         }
         return prev + 1;
       });
-    }, 30); // Faster progress
+    }, 30);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [shouldShow]);
 
   // --- 4. useEffect for Loading Items (Faster: 150ms) ---
   useEffect(() => {
+    if (!shouldShow) return;
+
     const itemInterval = setInterval(() => {
       setLoadingItems(prev => {
         const nextIndex = prev.length;
@@ -76,10 +96,10 @@ export default function PortfolioLoader() {
         }
         return prev;
       });
-    }, 150); // Faster item logging
+    }, 150);
 
     return () => clearInterval(itemInterval);
-  }, [progress]);
+  }, [progress, shouldShow]);
 
   // --- 5. useEffect for Phase Update ---
   useEffect(() => {
@@ -89,8 +109,11 @@ export default function PortfolioLoader() {
     else setCurrentPhase('ready');
   }, [progress]);
 
-  // Type-safe lookup for current phase data
   const currentPhaseData = phases.find(p => p.name === currentPhase);
+
+  // NOW we can return early AFTER all hooks are called
+  if (pathname?.startsWith('/admin')) return null;
+  if (!shouldShow) return null;
 
   return (
     <div className={`fixed inset-0 z-[200] bg-background transition-opacity duration-700 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
@@ -174,7 +197,6 @@ export default function PortfolioLoader() {
             <div className="flex items-center justify-center gap-3">
               <div className="w-1.5 h-1.5 bg-[#e8e6e0] animate-pulse" style={{ opacity: 0.6 }} />
               <p className="text-foreground text-xs sm:text-sm tracking-[0.2em] font-mono" style={{ opacity: 0.5 }}>
-                {/* Use optional chaining because currentPhaseData might be undefined initially */}
                 {currentPhaseData?.text}
               </p>
             </div>

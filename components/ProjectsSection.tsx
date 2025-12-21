@@ -1,9 +1,34 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import projectsData from "@/projects.json";
 import Link from "next/link";
+import projectsData from "@/projects.json";
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 interface Project {
+  id: string;
+  title: string;
+  subtitle: string;
+  year: string;
+  sector: string;
+  responsibility?: string;
+  impact?: string;
+  tech: string[];
+  description: string;
+  features?: string[];
+  images: string[];
+  live: string;
+  github: string;
+  comingSoon: boolean;
+  inProgress: boolean;
+  category: Category | null;
+}
+
+interface JsonProject {
   title: string;
   subtitle: string;
   year: string;
@@ -21,26 +46,23 @@ interface Project {
 }
 
 interface ProjectsData {
-  featuredProjects: Project[];
-  webProjects: Project[];
+  featuredProjects: JsonProject[];
+  webProjects: JsonProject[];
 }
 
 const ProjectsSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-
-  const FEATURED_PROJECTS = (projectsData as ProjectsData).featuredProjects;
-  const WEB_PROJECTS = (projectsData as ProjectsData).webProjects;
-
-  const allProjects: Project[] =
-    activeCategory === "all"
-      ? [...FEATURED_PROJECTS, ...WEB_PROJECTS]
-      : activeCategory === "featured"
-      ? FEATURED_PROJECTS
-      : WEB_PROJECTS;
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [clickedProjectId, setClickedProjectId] = useState<string | null>(null);
 
   useEffect(() => {
+    fetchCategories();
+    fetchAllProjects();
+    
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -49,6 +71,90 @@ const ProjectsSection: React.FC = () => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    filterProjects();
+  }, [activeCategory]);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch('/api/categories');
+      const data = await res.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      // Use default categories if API fails
+      setCategories([
+        { id: 'featured', name: 'Featured', slug: 'featured' },
+        { id: 'web', name: 'Web', slug: 'web' },
+      ]);
+    }
+  };
+
+  const fetchAllProjects = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch from API
+      let apiProjects: Project[] = [];
+      try {
+        const res = await fetch('/api/projects');
+        if (res.ok) {
+          apiProjects = await res.json();
+        }
+      } catch (error) {
+        console.error('Error fetching API projects:', error);
+      }
+
+      // Get JSON projects
+      const data = projectsData as ProjectsData;
+      const jsonProjects: Project[] = [];
+
+      // Convert featured projects
+      data.featuredProjects.forEach((project, index) => {
+        jsonProjects.push({
+          id: `json-featured-${index}`,
+          ...project,
+          category: { id: 'featured', name: 'Featured', slug: 'featured' }
+        });
+      });
+
+      // Convert web projects
+      data.webProjects.forEach((project, index) => {
+        jsonProjects.push({
+          id: `json-web-${index}`,
+          ...project,
+          category: { id: 'web', name: 'Web', slug: 'web' }
+        });
+      });
+
+      // Merge both sources (remove duplicates by title)
+      const allProjects = [...apiProjects];
+      jsonProjects.forEach(jsonProject => {
+        const exists = allProjects.some(p => p.title === jsonProject.title);
+        if (!exists) {
+          allProjects.push(jsonProject);
+        }
+      });
+
+      setProjects(allProjects);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterProjects = () => {
+    if (activeCategory === 'all') {
+      return;
+    }
+    // Filter is handled in the render
+  };
+
+  const filteredProjects = activeCategory === 'all' 
+    ? projects 
+    : projects.filter(p => p.category?.slug === activeCategory);
 
   const handleMouseEnter = (index: number) => {
     if (!isMobile) {
@@ -79,16 +185,33 @@ const ProjectsSection: React.FC = () => {
   };
 
   const getCategoryLabel = (category: string): string => {
-    const labels: Record<string, string> = {
-      all: "ALL PROJECTS",
-      featured: "FEATURED",
-      web: "WEB APPS"
-    };
-    return labels[category] || category.toUpperCase();
+    if (category === 'all') return 'ALL PROJECTS';
+    const cat = categories.find(c => c.slug === category);
+    return cat ? cat.name.toUpperCase() : category.toUpperCase();
   };
 
-  const getProjectType = (index: number): string => {
-    return index < FEATURED_PROJECTS.length ? "FEATURED" : "WEB";
+  const getProjectLink = (project: Project): string => {
+    // If it's from JSON (has json- prefix), use title
+    if (project.id.startsWith('json-')) {
+      return `/project/${encodeURIComponent(project.title)}`;
+    }
+    // If it's from database, use ID
+    return `/project/${project.id}`;
+  };
+
+  const handleProjectClick = (e: React.MouseEvent, project: Project) => {
+    e.preventDefault();
+    setClickedProjectId(project.id);
+    
+    // Navigate after animation
+    setTimeout(() => {
+      window.location.href = getProjectLink(project);
+    }, 600);
+  };
+
+  const getTechLabel = (project: Project): string => {
+    const isDesign = project.category?.slug === 'design' || project.category?.slug === 'branding';
+    return isDesign ? 'TOOLS' : 'TECH STACK';
   };
 
   return (
@@ -138,7 +261,7 @@ const ProjectsSection: React.FC = () => {
 
           {/* Archive Stats */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono">
-            <span>TOTAL: {allProjects.length} PROJECTS</span>
+            <span>TOTAL: {filteredProjects.length} PROJECTS</span>
             <span className="hidden sm:inline">•</span>
             <span className="hidden sm:inline">CATEGORY: {getCategoryLabel(activeCategory)}</span>
           </div>
@@ -150,18 +273,35 @@ const ProjectsSection: React.FC = () => {
             FILTER BY CLASSIFICATION
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-3">
-            {["all", "featured", "web"].map((category) => (
+            <button
+              onClick={() => setActiveCategory("all")}
+              className={`relative px-5 sm:px-6 py-2.5 sm:py-3 text-xs font-bold tracking-[0.15em] transition-all duration-300 ${
+                activeCategory === "all"
+                  ? "bg-foreground text-background"
+                  : "border border-foreground border-opacity-30 text-foreground hover:border-opacity-50"
+              }`}
+            >
+              <span className="relative z-10">ALL PROJECTS</span>
+              {activeCategory === "all" && (
+                <>
+                  <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-background opacity-50" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-background opacity-50" />
+                </>
+              )}
+            </button>
+            
+            {categories.map((category) => (
               <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
+                key={category.id}
+                onClick={() => setActiveCategory(category.slug)}
                 className={`relative px-5 sm:px-6 py-2.5 sm:py-3 text-xs font-bold tracking-[0.15em] transition-all duration-300 ${
-                  activeCategory === category
+                  activeCategory === category.slug
                     ? "bg-foreground text-background"
                     : "border border-foreground border-opacity-30 text-foreground hover:border-opacity-50"
                 }`}
               >
-                <span className="relative z-10">{getCategoryLabel(category)}</span>
-                {activeCategory === category && (
+                <span className="relative z-10">{category.name.toUpperCase()}</span>
+                {activeCategory === category.slug && (
                   <>
                     <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-background opacity-50" />
                     <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-background opacity-50" />
@@ -172,121 +312,171 @@ const ProjectsSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Projects Archive List */}
-        <div className="space-y-0 border-t border-foreground border-opacity-10">
-          {allProjects.map((project, index) => (
-            <Link
-              key={index}
-              href={`/project/${encodeURIComponent(project.title)}`}
-              onMouseEnter={() => handleMouseEnter(index)}
-              onMouseLeave={handleMouseLeave}
-              className="block group relative border-b border-foreground border-opacity-10 transition-all duration-500 hover:bg-foreground/5"
-            >
-              {/* Main Row */}
-              <div className="py-5 sm:py-6 md:py-7 grid grid-cols-12 gap-3 sm:gap-4 md:gap-6 items-start md:items-center">
-                {/* Archive Index */}
-                <div className="col-span-2 sm:col-span-2 md:col-span-1 flex flex-col gap-1">
-                  <span className="text-foreground opacity-30 group-hover:opacity-100 text-sm sm:text-base font-mono transition-opacity duration-300">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div className="hidden md:block w-full h-[1px] bg-foreground opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-                </div>
-
-                {/* Project Title & Info */}
-                <div className="col-span-10 sm:col-span-10 md:col-span-5 space-y-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono">
-                      {getProjectType(index)}
-                    </span>
-                    <div className="w-px h-2 bg-foreground opacity-20" />
-                    <span className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono">
-                      {project.year}
-                    </span>
-                  </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground tracking-tight leading-tight group-hover:translate-x-2 transition-transform duration-300">
-                    {project.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-foreground opacity-50 leading-relaxed">
-                    {project.subtitle}
-                  </p>
+        {/* Loading State */}
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-foreground"></div>
+            <p className="text-foreground opacity-40 text-sm mt-4 font-mono tracking-wider">
+              LOADING PROJECTS...
+            </p>
+          </div>
+        ) : filteredProjects.length === 0 ? (
+          <div className="text-center py-20 border border-foreground border-opacity-10">
+            <p className="text-foreground opacity-40 text-lg mb-4">No projects found</p>
+            <p className="text-foreground opacity-30 text-sm font-mono">
+              Try selecting a different category
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Projects Archive List */}
+            <div className="space-y-0 border-t border-foreground border-opacity-10">
+              {filteredProjects.map((project, index) => (
+                <a
+                  key={project.id}
+                  href={getProjectLink(project)}
+                  onClick={(e) => handleProjectClick(e, project)}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={handleMouseLeave}
+                  className={`block group relative border-b border-foreground border-opacity-10 transition-all duration-500 cursor-pointer overflow-hidden ${
+                    clickedProjectId === project.id
+                      ? 'bg-foreground/10 scale-[0.98]'
+                      : 'hover:bg-foreground/5'
+                  }`}
+                >
+                  {/* Loading bar animation on click */}
+                  {clickedProjectId === project.id && (
+                    <div className="absolute top-0 left-0 h-1 bg-foreground animate-[loading_0.6s_ease-in-out]" 
+                         style={{
+                           width: '100%',
+                           animation: 'loading 0.6s ease-in-out'
+                         }} 
+                    />
+                  )}
                   
-                  {/* Tech Pills - Mobile */}
-                  <div className="flex flex-wrap gap-1.5 pt-2 md:hidden">
-                    {project.tech.slice(0, 3).map((tech, i) => (
+                  <style jsx>{`
+                    @keyframes loading {
+                      from {
+                        width: 0%;
+                      }
+                      to {
+                        width: 100%;
+                      }
+                    }
+                  `}</style>
+                  {/* Main Row */}
+                  <div className={`py-5 sm:py-6 md:py-7 grid grid-cols-12 gap-3 sm:gap-4 md:gap-6 items-start md:items-center transition-all duration-300 ${
+                    clickedProjectId === project.id ? 'opacity-60 blur-[2px]' : ''
+                  }`}>
+                    {/* Archive Index */}
+                    <div className="col-span-2 sm:col-span-2 md:col-span-1 flex flex-col gap-1">
+                      <span className="text-foreground opacity-30 group-hover:opacity-100 text-sm sm:text-base font-mono transition-opacity duration-300">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <div className="hidden md:block w-full h-[1px] bg-foreground opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                    </div>
+
+                    {/* Project Title & Info */}
+                    <div className="col-span-10 sm:col-span-10 md:col-span-5 space-y-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        {project.category && (
+                          <>
+                            <span className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono">
+                              {project.category.name.toUpperCase()}
+                            </span>
+                            <div className="w-px h-2 bg-foreground opacity-20" />
+                          </>
+                        )}
+                        <span className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono">
+                          {project.year}
+                        </span>
+                      </div>
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground tracking-tight leading-tight group-hover:translate-x-2 transition-transform duration-300">
+                        {project.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-foreground opacity-50 leading-relaxed">
+                        {project.subtitle}
+                      </p>
+                      
+                      {/* Tech Pills - Mobile */}
+                      <div className="flex flex-wrap gap-1.5 pt-2 md:hidden">
+                        {project.tech.slice(0, 3).map((tech, i) => (
+                          <span
+                            key={i}
+                            className="text-[9px] px-2 py-1 border border-foreground border-opacity-20 text-foreground opacity-60 font-mono"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                        {project.tech.length > 3 && (
+                          <span className="text-[9px] px-2 py-1 text-foreground opacity-40 font-mono">
+                            +{project.tech.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Tech Stack - Desktop */}
+                    <div className="hidden md:block col-span-3 space-y-1.5">
+                      <p className="text-foreground opacity-30 text-[10px] tracking-[0.15em] font-mono">
+                        {getTechLabel(project)}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.tech.slice(0, 4).map((tech, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] px-2 py-1 border border-foreground border-opacity-20 text-foreground opacity-60 font-mono"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                        {project.tech.length > 4 && (
+                          <span className="text-[10px] px-2 py-1 text-foreground opacity-40 font-mono">
+                            +{project.tech.length - 4}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Sector */}
+                    <div className="col-span-6 sm:col-span-5 md:col-span-2 space-y-1">
+                      <p className="text-foreground opacity-30 text-[10px] tracking-[0.15em] font-mono">
+                        SECTOR
+                      </p>
+                      <p className="text-foreground text-xs sm:text-sm opacity-70 font-medium">
+                        {project.sector}
+                      </p>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div className="col-span-6 sm:col-span-5 md:col-span-1 flex justify-end">
                       <span
-                        key={i}
-                        className="text-[9px] px-2 py-1 border border-foreground border-opacity-20 text-foreground opacity-60 font-mono"
+                        className={`text-[9px] sm:text-[10px] px-2 sm:px-3 py-1 sm:py-1.5 font-bold tracking-[0.1em] whitespace-nowrap ${getStatusStyle(project)}`}
                       >
-                        {tech}
+                        {getStatusLabel(project)}
                       </span>
-                    ))}
-                    {project.tech.length > 3 && (
-                      <span className="text-[9px] px-2 py-1 text-foreground opacity-40 font-mono">
-                        +{project.tech.length - 3}
-                      </span>
-                    )}
+                    </div>
                   </div>
-                </div>
+                </a>
+              ))}
+            </div>
 
-                {/* Tech Stack - Desktop */}
-                <div className="hidden md:block col-span-3 space-y-1.5">
-                  <p className="text-foreground opacity-30 text-[10px] tracking-[0.15em] font-mono">
-                    TECH STACK
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {project.tech.slice(0, 4).map((tech, i) => (
-                      <span
-                        key={i}
-                        className="text-[10px] px-2 py-1 border border-foreground border-opacity-20 text-foreground opacity-60 font-mono"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    {project.tech.length > 4 && (
-                      <span className="text-[10px] px-2 py-1 text-foreground opacity-40 font-mono">
-                        +{project.tech.length - 4}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Sector */}
-                <div className="col-span-6 sm:col-span-5 md:col-span-2 space-y-1">
-                  <p className="text-foreground opacity-30 text-[10px] tracking-[0.15em] font-mono">
-                    SECTOR
-                  </p>
-                  <p className="text-foreground text-xs sm:text-sm opacity-70 font-medium">
-                    {project.sector}
-                  </p>
-                </div>
-
-                {/* Status Badge */}
-                <div className="col-span-6 sm:col-span-5 md:col-span-1 flex justify-end">
-                  <span
-                    className={`text-[9px] sm:text-[10px] px-2 sm:px-3 py-1 sm:py-1.5 font-bold tracking-[0.1em] whitespace-nowrap ${getStatusStyle(project)}`}
-                  >
-                    {getStatusLabel(project)}
-                  </span>
-                </div>
+            {/* Archive Footer */}
+            <div className="mt-20 sm:mt-24 space-y-6">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="h-[1px] flex-1 bg-foreground opacity-20" />
+                <span className="text-foreground text-[10px] tracking-[0.2em] sm:tracking-[0.3em] opacity-40 font-mono">
+                  END OF ARCHIVE
+                </span>
+                <div className="h-[1px] flex-1 bg-foreground opacity-20" />
               </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Archive Footer */}
-        <div className="mt-20 sm:mt-24 space-y-6">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="h-[1px] flex-1 bg-foreground opacity-20" />
-            <span className="text-foreground text-[10px] tracking-[0.2em] sm:tracking-[0.3em] opacity-40 font-mono">
-              END OF ARCHIVE
-            </span>
-            <div className="h-[1px] flex-1 bg-foreground opacity-20" />
-          </div>
-          
-          <div className="text-center text-foreground opacity-30 text-[10px] tracking-[0.2em] font-mono">
-            {allProjects.length} PROJECTS ARCHIVED
-          </div>
-        </div>
+              
+              <div className="text-center text-foreground opacity-30 text-[10px] tracking-[0.2em] font-mono">
+                {filteredProjects.length} PROJECTS ARCHIVED
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

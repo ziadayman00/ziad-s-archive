@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Logo from "./Logo";
 import MenuBtn from "./MenuBtn";
 
@@ -7,6 +8,10 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const pathname = usePathname();
+
+  // Hide on admin pages
+  if (pathname?.startsWith('/admin')) return null;
 
   // Handle scroll effect
   useEffect(() => {

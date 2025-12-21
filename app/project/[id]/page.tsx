@@ -1,9 +1,100 @@
-import { getProject } from "@/app/actions";
+// app/project/[id]/page.tsx
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { db } from "@/lib/db";
+import { projects, categories } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import projectsData from "@/projects.json";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+interface JsonProject {
+  title: string;
+  subtitle: string;
+  year: string;
+  sector: string;
+  responsibility?: string;
+  impact?: string;
+  tech: string[];
+  description: string;
+  features?: string[];
+  images: string[];
+  live: string;
+  github: string;
+  comingSoon: boolean;
+  inProgress: boolean;
+}
+
+interface ProjectsData {
+  featuredProjects: JsonProject[];
+  webProjects: JsonProject[];
+}
+
+async function getProject(idOrTitle: string) {
+  try {
+    // First, try to get from database by ID
+    const result = await db
+      .select({
+        project: projects,
+        category: categories,
+      })
+      .from(projects)
+      .leftJoin(categories, eq(projects.categoryId, categories.id))
+      .where(eq(projects.id, idOrTitle))
+      .limit(1);
+
+    if (result.length > 0) {
+      return {
+        ...result[0].project,
+        category: result[0].category,
+      };
+    }
+
+    // If not found in database, try to find in JSON by title
+    const decodedTitle = decodeURIComponent(idOrTitle);
+    const data = projectsData as ProjectsData;
+    
+    // Search in featured projects
+    const featuredProject = data.featuredProjects.find(
+      p => p.title.toLowerCase() === decodedTitle.toLowerCase()
+    );
+    
+    if (featuredProject) {
+      return {
+        ...featuredProject,
+        id: 'json-featured',
+        category: { id: 'featured', name: 'Featured', slug: 'featured' },
+        categoryId: 'featured',
+        order: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
+
+    // Search in web projects
+    const webProject = data.webProjects.find(
+      p => p.title.toLowerCase() === decodedTitle.toLowerCase()
+    );
+    
+    if (webProject) {
+      return {
+        ...webProject,
+        id: 'json-web',
+        category: { id: 'web', name: 'Web', slug: 'web' },
+        categoryId: 'web',
+        order: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error fetching project:', error);
+    return null;
+  }
 }
 
 export default async function ProjectPage({ params }: PageProps) {
@@ -19,7 +110,7 @@ export default async function ProjectPage({ params }: PageProps) {
       {/* Navigation */}
       <nav className="fixed top-30 left-0 right-0 z-[40] px-6 flex justify-between items-center mix-blend-difference">
         <Link 
-          href="/"
+          href="/#projects"
           className="text-sm font-mono tracking-[0.2em] opacity-70 hover:opacity-100 transition-opacity"
         >
           ← BACK TO ARCHIVE
@@ -33,6 +124,12 @@ export default async function ProjectPage({ params }: PageProps) {
             <span>{project.year}</span>
             <span className="w-px h-3 bg-foreground/50" />
             <span>{project.sector}</span>
+            {project.category && (
+              <>
+                <span className="w-px h-3 bg-foreground/50" />
+                <span>{project.category.name}</span>
+              </>
+            )}
           </div>
           
           <h1 className="text-[clamp(3rem,8vw,6rem)] font-black leading-[0.9] tracking-tight">
@@ -83,7 +180,7 @@ export default async function ProjectPage({ params }: PageProps) {
               </div>
 
               <div className="flex flex-col gap-3 pt-4">
-                {project.live !== "#" && !project.comingSoon && (
+                {project.live && project.live !== "#" && !project.comingSoon && (
                   <a 
                     href={project.live}
                     target="_blank"
@@ -93,7 +190,7 @@ export default async function ProjectPage({ params }: PageProps) {
                     VISIT WEBSITE
                   </a>
                 )}
-                {project.github !== "#" && (
+                {project.github && project.github !== "#" && (
                   <a 
                     href={project.github}
                     target="_blank"
