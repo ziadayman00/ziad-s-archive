@@ -126,7 +126,7 @@ const HeroSection = () => {
                 CREATIVE
               </span>
               <br />
-              <span className="inline-block mt-1 sm:mt-2 md:mt-3 text-cream ">
+              <span className="inline-block mt-1 sm:mt-2 md:mt-3 text-foreground ">
                 EXPERIENCES
               </span>
             </h1>

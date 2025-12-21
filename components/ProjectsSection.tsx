@@ -130,7 +130,7 @@ const ProjectsSection: React.FC = () => {
           </h2>
 
           <div className="flex items-center gap-3 sm:gap-4 max-w-2xl mb-8">
-            <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-cream opacity-30" />
+            <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-foreground opacity-30" />
             <p className="text-foreground opacity-50 text-xs sm:text-sm font-light tracking-wide">
               A curated collection of projects spanning full-stack applications and creative explorations
             </p>

@@ -79,7 +79,7 @@ const Footer: React.FC = () => {
         <div
           className="h-full w-full"
           style={{
-            backgroundImage: `linear-gradient(var(--color-cream) 1px, transparent 1px), linear-gradient(90deg, var(--color-cream) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(var(--color-foreground) 1px, transparent 1px), linear-gradient(90deg, var(--color-foreground) 1px, transparent 1px)`,
             backgroundSize: "80px 80px",
           }}
         />
@@ -108,7 +108,7 @@ const Footer: React.FC = () => {
           </h2>
 
           <div className="flex items-center gap-3 sm:gap-4 max-w-xl">
-            <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-cream opacity-30" />
+            <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-foreground opacity-30" />
             <p className="text-foreground opacity-50 text-xs sm:text-sm font-light tracking-wide">
               Available for freelance opportunities and collaborations
             </p>

@@ -15,7 +15,7 @@ export default async function ProjectPage({ params }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-background text-cream selection:bg-cream selection:text-background">
+    <main className="min-h-screen bg-background text-foreground selection:bg-foreground selection:text-background">
       {/* Navigation */}
       <nav className="fixed top-30 left-0 right-0 z-[40] px-6 flex justify-between items-center mix-blend-difference">
         <Link 
@@ -31,7 +31,7 @@ export default async function ProjectPage({ params }: PageProps) {
         <div className="space-y-6">
           <div className="flex items-center gap-4 text-xs font-mono tracking-[0.2em] opacity-50">
             <span>{project.year}</span>
-            <span className="w-px h-3 bg-cream/50" />
+            <span className="w-px h-3 bg-foreground/50" />
             <span>{project.sector}</span>
           </div>
           
@@ -53,7 +53,7 @@ export default async function ProjectPage({ params }: PageProps) {
           <div className="lg:col-span-4 space-y-12">
             
             {/* Project Info */}
-            <div className="space-y-8 border-t border-cream/10 pt-8">
+            <div className="space-y-8 border-t border-foreground/10 pt-8">
               {(project.responsibility || project.impact) && (
                 <div className="grid grid-cols-2 gap-8">
                   {project.responsibility && (
@@ -75,7 +75,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 <h3 className="text-[10px] font-mono tracking-[0.2em] opacity-40 mb-3">TECH STACK</h3>
                 <div className="flex flex-wrap gap-2">
                   {project.tech.map((t) => (
-                    <span key={t} className="text-xs px-3 py-1 border border-cream/20 opacity-70 font-mono">
+                    <span key={t} className="text-xs px-3 py-1 border border-foreground/20 opacity-70 font-mono">
                       {t}
                     </span>
                   ))}
@@ -88,7 +88,7 @@ export default async function ProjectPage({ params }: PageProps) {
                     href={project.live}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-4 bg-cream text-background text-center text-xs font-bold tracking-[0.2em] hover:opacity-90 transition-opacity"
+                    className="w-full py-4 bg-foreground text-background text-center text-xs font-bold tracking-[0.2em] hover:opacity-90 transition-opacity"
                   >
                     VISIT WEBSITE
                   </a>
@@ -98,7 +98,7 @@ export default async function ProjectPage({ params }: PageProps) {
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-4 border border-cream/30 text-center text-xs font-bold tracking-[0.2em] hover:bg-cream hover:text-background transition-all"
+                    className="w-full py-4 border border-foreground/30 text-center text-xs font-bold tracking-[0.2em] hover:bg-foreground hover:text-background transition-all"
                   >
                     VIEW SOURCE
                   </a>
@@ -107,7 +107,7 @@ export default async function ProjectPage({ params }: PageProps) {
             </div>
 
             {/* Description */}
-            <div className="border-t border-cream/10 pt-8">
+            <div className="border-t border-foreground/10 pt-8">
               <h3 className="text-[10px] font-mono tracking-[0.2em] opacity-40 mb-6">OVERVIEW</h3>
               <p className="text-base leading-relaxed opacity-80">
                 {project.description}
@@ -116,7 +116,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
             {/* Features */}
             {project.features && project.features.length > 0 && (
-              <div className="border-t border-cream/10 pt-8">
+              <div className="border-t border-foreground/10 pt-8">
                 <h3 className="text-[10px] font-mono tracking-[0.2em] opacity-40 mb-6">KEY FEATURES</h3>
                 <ul className="space-y-4">
                   {project.features.map((feature, i) => (
@@ -133,13 +133,13 @@ export default async function ProjectPage({ params }: PageProps) {
           {/* Right Column - Images */}
           <div className="lg:col-span-8 space-y-8">
             {project.images.map((img, i) => (
-              <div key={i} className="relative group overflow-hidden bg-cream/5">
+              <div key={i} className="relative group overflow-hidden bg-foreground/5">
                 <img
                   src={img}
                   alt={`${project.title} screenshot ${i + 1}`}
                   className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                 />
-                <div className="absolute inset-0 border border-cream/10 pointer-events-none" />
+                <div className="absolute inset-0 border border-foreground/10 pointer-events-none" />
               </div>
             ))}
           </div>
