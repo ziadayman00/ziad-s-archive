@@ -70,12 +70,12 @@ const ProjectsSection: React.FC = () => {
 
   const getStatusStyle = (project: Project): string => {
     if (project.comingSoon) {
-      return "border border-cream border-opacity-30 text-cream opacity-50";
+      return "border border-foreground border-opacity-30 text-foreground opacity-50";
     }
     if (project.inProgress) {
-      return "border border-cream border-opacity-50 text-cream opacity-70";
+      return "border border-foreground border-opacity-50 text-foreground opacity-70";
     }
-    return "bg-cream text-background";
+    return "bg-foreground text-background";
   };
 
   const getCategoryLabel = (category: string): string => {
@@ -108,7 +108,7 @@ const ProjectsSection: React.FC = () => {
       </div>
 
       {/* Archive Markers */}
-      <div className="absolute top-8 sm:top-12 left-4 sm:left-6 lg:left-12 xl:left-16 text-cream opacity-20 text-[10px] tracking-[0.3em] font-mono">
+      <div className="absolute top-8 sm:top-12 left-4 sm:left-6 lg:left-12 xl:left-16 text-foreground opacity-20 text-[10px] tracking-[0.3em] font-mono">
         <div>SEC.02</div>
         <div className="mt-1 text-[8px]">————</div>
       </div>
@@ -117,13 +117,13 @@ const ProjectsSection: React.FC = () => {
         {/* Archive Header */}
         <div className="mb-16 md:mb-24">
           <div className="flex items-center gap-3 sm:gap-4 mb-8">
-            <div className="w-8 sm:w-12 h-[1px] bg-cream opacity-30" />
-            <span className="text-cream text-[9px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
+            <div className="w-8 sm:w-12 h-[1px] bg-foreground opacity-30" />
+            <span className="text-foreground text-[9px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
               PROJECT ARCHIVE
             </span>
           </div>
 
-          <h2 className="text-[clamp(3rem,10vw,8rem)] font-black text-cream leading-[0.9] tracking-[-0.01em] mb-6">
+          <h2 className="text-[clamp(3rem,10vw,8rem)] font-black text-foreground leading-[0.9] tracking-[-0.01em] mb-6">
             SELECTED
             <br />
             <span className="inline-block mt-1 sm:mt-2 md:mt-3">WORKS</span>
@@ -131,13 +131,13 @@ const ProjectsSection: React.FC = () => {
 
           <div className="flex items-center gap-3 sm:gap-4 max-w-2xl mb-8">
             <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-cream opacity-30" />
-            <p className="text-cream opacity-50 text-xs sm:text-sm font-light tracking-wide">
+            <p className="text-foreground opacity-50 text-xs sm:text-sm font-light tracking-wide">
               A curated collection of projects spanning full-stack applications and creative explorations
             </p>
           </div>
 
           {/* Archive Stats */}
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono">
             <span>TOTAL: {allProjects.length} PROJECTS</span>
             <span className="hidden sm:inline">•</span>
             <span className="hidden sm:inline">CATEGORY: {getCategoryLabel(activeCategory)}</span>
@@ -146,7 +146,7 @@ const ProjectsSection: React.FC = () => {
 
         {/* Filter Tabs - Archive Style */}
         <div className="mb-12 md:mb-16">
-          <div className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono mb-4">
+          <div className="text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono mb-4">
             FILTER BY CLASSIFICATION
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -156,8 +156,8 @@ const ProjectsSection: React.FC = () => {
                 onClick={() => setActiveCategory(category)}
                 className={`relative px-5 sm:px-6 py-2.5 sm:py-3 text-xs font-bold tracking-[0.15em] transition-all duration-300 ${
                   activeCategory === category
-                    ? "bg-cream text-background"
-                    : "border border-cream border-opacity-30 text-cream hover:border-opacity-50"
+                    ? "bg-foreground text-background"
+                    : "border border-foreground border-opacity-30 text-foreground hover:border-opacity-50"
                 }`}
               >
                 <span className="relative z-10">{getCategoryLabel(category)}</span>
@@ -173,40 +173,40 @@ const ProjectsSection: React.FC = () => {
         </div>
 
         {/* Projects Archive List */}
-        <div className="space-y-0 border-t border-cream border-opacity-10">
+        <div className="space-y-0 border-t border-foreground border-opacity-10">
           {allProjects.map((project, index) => (
             <Link
               key={index}
               href={`/project/${encodeURIComponent(project.title)}`}
               onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
-              className="block group relative border-b border-cream border-opacity-10 transition-all duration-500 hover:bg-cream/5"
+              className="block group relative border-b border-foreground border-opacity-10 transition-all duration-500 hover:bg-foreground/5"
             >
               {/* Main Row */}
               <div className="py-5 sm:py-6 md:py-7 grid grid-cols-12 gap-3 sm:gap-4 md:gap-6 items-start md:items-center">
                 {/* Archive Index */}
                 <div className="col-span-2 sm:col-span-2 md:col-span-1 flex flex-col gap-1">
-                  <span className="text-cream opacity-30 group-hover:opacity-100 text-sm sm:text-base font-mono transition-opacity duration-300">
+                  <span className="text-foreground opacity-30 group-hover:opacity-100 text-sm sm:text-base font-mono transition-opacity duration-300">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <div className="hidden md:block w-full h-[1px] bg-cream opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                  <div className="hidden md:block w-full h-[1px] bg-foreground opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
                 </div>
 
                 {/* Project Title & Info */}
                 <div className="col-span-10 sm:col-span-10 md:col-span-5 space-y-2">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-cream opacity-30 text-[9px] tracking-[0.15em] font-mono">
+                    <span className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono">
                       {getProjectType(index)}
                     </span>
-                    <div className="w-px h-2 bg-cream opacity-20" />
-                    <span className="text-cream opacity-30 text-[9px] tracking-[0.15em] font-mono">
+                    <div className="w-px h-2 bg-foreground opacity-20" />
+                    <span className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono">
                       {project.year}
                     </span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-cream tracking-tight leading-tight group-hover:translate-x-2 transition-transform duration-300">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground tracking-tight leading-tight group-hover:translate-x-2 transition-transform duration-300">
                     {project.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-cream opacity-50 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-foreground opacity-50 leading-relaxed">
                     {project.subtitle}
                   </p>
                   
@@ -215,13 +215,13 @@ const ProjectsSection: React.FC = () => {
                     {project.tech.slice(0, 3).map((tech, i) => (
                       <span
                         key={i}
-                        className="text-[9px] px-2 py-1 border border-cream border-opacity-20 text-cream opacity-60 font-mono"
+                        className="text-[9px] px-2 py-1 border border-foreground border-opacity-20 text-foreground opacity-60 font-mono"
                       >
                         {tech}
                       </span>
                     ))}
                     {project.tech.length > 3 && (
-                      <span className="text-[9px] px-2 py-1 text-cream opacity-40 font-mono">
+                      <span className="text-[9px] px-2 py-1 text-foreground opacity-40 font-mono">
                         +{project.tech.length - 3}
                       </span>
                     )}
@@ -230,20 +230,20 @@ const ProjectsSection: React.FC = () => {
 
                 {/* Tech Stack - Desktop */}
                 <div className="hidden md:block col-span-3 space-y-1.5">
-                  <p className="text-cream opacity-30 text-[10px] tracking-[0.15em] font-mono">
+                  <p className="text-foreground opacity-30 text-[10px] tracking-[0.15em] font-mono">
                     TECH STACK
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {project.tech.slice(0, 4).map((tech, i) => (
                       <span
                         key={i}
-                        className="text-[10px] px-2 py-1 border border-cream border-opacity-20 text-cream opacity-60 font-mono"
+                        className="text-[10px] px-2 py-1 border border-foreground border-opacity-20 text-foreground opacity-60 font-mono"
                       >
                         {tech}
                       </span>
                     ))}
                     {project.tech.length > 4 && (
-                      <span className="text-[10px] px-2 py-1 text-cream opacity-40 font-mono">
+                      <span className="text-[10px] px-2 py-1 text-foreground opacity-40 font-mono">
                         +{project.tech.length - 4}
                       </span>
                     )}
@@ -252,10 +252,10 @@ const ProjectsSection: React.FC = () => {
 
                 {/* Sector */}
                 <div className="col-span-6 sm:col-span-5 md:col-span-2 space-y-1">
-                  <p className="text-cream opacity-30 text-[10px] tracking-[0.15em] font-mono">
+                  <p className="text-foreground opacity-30 text-[10px] tracking-[0.15em] font-mono">
                     SECTOR
                   </p>
-                  <p className="text-cream text-xs sm:text-sm opacity-70 font-medium">
+                  <p className="text-foreground text-xs sm:text-sm opacity-70 font-medium">
                     {project.sector}
                   </p>
                 </div>
@@ -276,14 +276,14 @@ const ProjectsSection: React.FC = () => {
         {/* Archive Footer */}
         <div className="mt-20 sm:mt-24 space-y-6">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="h-[1px] flex-1 bg-cream opacity-20" />
-            <span className="text-cream text-[10px] tracking-[0.2em] sm:tracking-[0.3em] opacity-40 font-mono">
+            <div className="h-[1px] flex-1 bg-foreground opacity-20" />
+            <span className="text-foreground text-[10px] tracking-[0.2em] sm:tracking-[0.3em] opacity-40 font-mono">
               END OF ARCHIVE
             </span>
-            <div className="h-[1px] flex-1 bg-cream opacity-20" />
+            <div className="h-[1px] flex-1 bg-foreground opacity-20" />
           </div>
           
-          <div className="text-center text-cream opacity-30 text-[10px] tracking-[0.2em] font-mono">
+          <div className="text-center text-foreground opacity-30 text-[10px] tracking-[0.2em] font-mono">
             {allProjects.length} PROJECTS ARCHIVED
           </div>
         </div>

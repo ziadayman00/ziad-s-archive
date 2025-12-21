@@ -12,7 +12,7 @@ const MenuBtn = ({ isOpen, onClick }: MenuBtnProps) => {
   return (
     <button 
       onClick={onClick}
-      className="relative z-[50] cursor-pointer text-4xl md:text-5xl text-[#fafbd7] transition-all duration-300 hover:scale-110 active:scale-95 "
+      className="relative z-[50] cursor-pointer text-4xl md:text-5xl text-[#e8e6e0] transition-all duration-300 hover:scale-110 active:scale-95 "
       aria-label={isOpen ? "Close menu" : "Open menu"}
       aria-expanded={isOpen}
     >

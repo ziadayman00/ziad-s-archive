@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer id="contact" className="relative bg-background border-t border-cream border-opacity-10">
+    <footer id="contact" className="relative bg-background border-t border-foreground border-opacity-10">
       {/* Subtle Grid Background */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
@@ -86,7 +86,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Archive Markers */}
-      <div className="absolute top-8 sm:top-12 left-4 sm:left-6 lg:left-12 xl:left-16 text-cream opacity-20 text-[10px] tracking-[0.3em] font-mono">
+      <div className="absolute top-8 sm:top-12 left-4 sm:left-6 lg:left-12 xl:left-16 text-foreground opacity-20 text-[10px] tracking-[0.3em] font-mono">
         <div>SEC.04</div>
         <div className="mt-1 text-[8px]">————</div>
       </div>
@@ -95,13 +95,13 @@ const Footer: React.FC = () => {
         {/* Section Header */}
         <div className="mb-16 md:mb-20">
           <div className="flex items-center gap-3 sm:gap-4 mb-8">
-            <div className="w-8 sm:w-12 h-[1px] bg-cream opacity-30" />
-            <span className="text-cream text-[9px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
+            <div className="w-8 sm:w-12 h-[1px] bg-foreground opacity-30" />
+            <span className="text-foreground text-[9px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
               LET'S CONNECT
             </span>
           </div>
 
-          <h2 className="text-[clamp(3rem,10vw,8rem)] font-black text-cream leading-[0.9] tracking-[-0.01em] mb-6">
+          <h2 className="text-[clamp(3rem,10vw,8rem)] font-black text-foreground leading-[0.9] tracking-[-0.01em] mb-6">
             GET IN
             <br />
             <span className="inline-block mt-1 sm:mt-2 md:mt-3">TOUCH</span>
@@ -109,7 +109,7 @@ const Footer: React.FC = () => {
 
           <div className="flex items-center gap-3 sm:gap-4 max-w-xl">
             <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-cream opacity-30" />
-            <p className="text-cream opacity-50 text-xs sm:text-sm font-light tracking-wide">
+            <p className="text-foreground opacity-50 text-xs sm:text-sm font-light tracking-wide">
               Available for freelance opportunities and collaborations
             </p>
           </div>
@@ -121,7 +121,7 @@ const Footer: React.FC = () => {
           <div className="space-y-8 sm:space-y-10">
             {/* Logo */}
             <div className="space-y-4">
-              <div className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono mb-4">
+              <div className="text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono mb-4">
                 BRAND
               </div>
               <div className="w-32 md:w-40">
@@ -130,17 +130,17 @@ const Footer: React.FC = () => {
                   alt="Ziad Ayman"
                   width={160}
                   height={40}
-                  className="w-full h-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
+                  className="w-full h-auto opacity-80 hover:opacity-100 transition-opacity duration-300 logo-recolor"
                 />
               </div>
             </div>
 
             {/* Description */}
-            <div className="space-y-4 border-l-2 border-cream border-opacity-10 pl-6">
-              <div className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono">
+            <div className="space-y-4 border-l-2 border-foreground border-opacity-10 pl-6">
+              <div className="text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono">
                 ABOUT
               </div>
-              <p className="text-cream opacity-60 text-sm md:text-base max-w-md leading-relaxed">
+              <p className="text-foreground opacity-60 text-sm md:text-base max-w-md leading-relaxed">
                 Frontend Developer specializing in React, Next.js, and modern web
                 technologies. Building responsive, user-friendly interfaces with
                 attention to detail and creative vision.
@@ -149,7 +149,7 @@ const Footer: React.FC = () => {
 
             {/* Social Links - Minimal Style */}
             <div className="space-y-4">
-              <div className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono">
+              <div className="text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono">
                 SOCIAL LINKS
               </div>
               <div className="flex flex-wrap gap-6">
@@ -162,13 +162,13 @@ const Footer: React.FC = () => {
                     className="group flex items-center gap-3 hover:translate-x-1 transition-transform duration-300"
                   >
                     <svg
-                      className="w-5 h-5 text-cream opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+                      className="w-5 h-5 text-foreground opacity-60 group-hover:opacity-100 transition-opacity duration-300"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
                       {social.icon}
                     </svg>
-                    <span className="text-cream opacity-70 group-hover:opacity-100 text-sm transition-opacity duration-300">
+                    <span className="text-foreground opacity-70 group-hover:opacity-100 text-sm transition-opacity duration-300">
                       {social.name}
                     </span>
                   </a>
@@ -180,7 +180,7 @@ const Footer: React.FC = () => {
           {/* Right Section - Contact Info */}
           <div className="space-y-8 sm:space-y-10">
             <div className="space-y-6">
-              <div className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono">
+              <div className="text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono">
                 CONTACT INFORMATION
               </div>
               <div className="space-y-6">
@@ -193,7 +193,7 @@ const Footer: React.FC = () => {
                       >
                         <div className="flex items-start gap-4">
                           <svg
-                            className="w-5 h-5 text-cream opacity-60 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0 mt-1"
+                            className="w-5 h-5 text-foreground opacity-60 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0 mt-1"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -201,10 +201,10 @@ const Footer: React.FC = () => {
                             {contact.icon}
                           </svg>
                           <div className="flex-1 min-w-0">
-                            <span className="text-cream opacity-40 text-[10px] tracking-[0.15em] font-mono block mb-1">
+                            <span className="text-foreground opacity-40 text-[10px] tracking-[0.15em] font-mono block mb-1">
                               {contact.label.toUpperCase()}
                             </span>
-                            <p className="text-cream opacity-70 group-hover:opacity-100 text-sm break-all transition-opacity duration-300">
+                            <p className="text-foreground opacity-70 group-hover:opacity-100 text-sm break-all transition-opacity duration-300">
                               {contact.value}
                             </p>
                           </div>
@@ -213,7 +213,7 @@ const Footer: React.FC = () => {
                     ) : (
                       <div className="flex items-start gap-4">
                         <svg
-                          className="w-5 h-5 text-cream opacity-60 flex-shrink-0 mt-1"
+                          className="w-5 h-5 text-foreground opacity-60 flex-shrink-0 mt-1"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -221,10 +221,10 @@ const Footer: React.FC = () => {
                           {contact.icon}
                         </svg>
                         <div className="flex-1">
-                          <span className="text-cream opacity-40 text-[10px] tracking-[0.15em] font-mono block mb-1">
+                          <span className="text-foreground opacity-40 text-[10px] tracking-[0.15em] font-mono block mb-1">
                             {contact.label.toUpperCase()}
                           </span>
-                          <p className="text-cream opacity-70 text-sm">
+                          <p className="text-foreground opacity-70 text-sm">
                             {contact.value}
                           </p>
                         </div>
@@ -236,14 +236,14 @@ const Footer: React.FC = () => {
             </div>
 
             {/* Availability Status */}
-            <div className="border-l-2 border-cream border-opacity-20 pl-6">
+            <div className="border-l-2 border-foreground border-opacity-20 pl-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-2 h-2 bg-cream opacity-60 animate-pulse" />
-                <span className="text-cream opacity-40 text-[10px] tracking-[0.2em] font-mono">
+                <div className="w-2 h-2 bg-foreground opacity-60 animate-pulse" />
+                <span className="text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono">
                   CURRENT STATUS
                 </span>
               </div>
-              <p className="text-cream opacity-80 text-sm font-bold">
+              <p className="text-foreground opacity-80 text-sm font-bold">
                 Available for new projects
               </p>
             </div>
@@ -253,46 +253,52 @@ const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="space-y-6">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="h-[1px] flex-1 bg-cream opacity-20" />
-            <span className="text-cream text-[10px] tracking-[0.2em] sm:tracking-[0.3em] opacity-40 font-mono">
+            <div className="h-[1px] flex-1 bg-foreground opacity-20" />
+            <span className="text-foreground text-[10px] tracking-[0.2em] sm:tracking-[0.3em] opacity-40 font-mono">
               ARCHIVE FOOTER
             </span>
-            <div className="h-[1px] flex-1 bg-cream opacity-20" />
+            <div className="h-[1px] flex-1 bg-foreground opacity-20" />
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-6 pt-6">
             {/* Copyright */}
             <div>
-              <div className="text-cream opacity-30 text-[9px] tracking-[0.15em] font-mono mb-2">
+              <div className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono mb-2">
                 COPYRIGHT
               </div>
-              <p className="text-cream opacity-60 text-xs">
+              <p className="text-foreground opacity-60 text-xs">
                 © {currentYear} ZIAD AYMAN
               </p>
             </div>
 
             {/* Built With */}
             <div>
-              <div className="text-cream opacity-30 text-[9px] tracking-[0.15em] font-mono mb-2">
+              <div className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono mb-2">
                 BUILT WITH
               </div>
-              <p className="text-cream opacity-60 text-xs">
+              <p className="text-foreground opacity-60 text-xs">
                 NEXT.JS • TAILWIND • PASSION
               </p>
             </div>
 
             {/* Version */}
             <div>
-              <div className="text-cream opacity-30 text-[9px] tracking-[0.15em] font-mono mb-2">
+              <div className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono mb-2">
                 VERSION
               </div>
-              <p className="text-cream opacity-60 text-xs">
+              <p className="text-foreground opacity-60 text-xs">
                 PORTFOLIO V4.0 • 2025
               </p>
             </div>
           </div>
         </div>
       </div>
+      
+      <style jsx>{`
+        :global(.logo-recolor) {
+          filter: brightness(0.92) saturate(0.5) hue-rotate(10deg);
+        }
+      `}</style>
     </footer>
   );
 };

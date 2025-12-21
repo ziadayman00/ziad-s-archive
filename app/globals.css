@@ -1,21 +1,25 @@
 ﻿@import "tailwindcss";
 
 :root {
-  /* الألوان الأساسية */
-  --background: #001b24;   /* تركوازي غامق */
-  --foreground: #fafbd7;   /* كريمي */
+  /* Primary Colors */
+  --background: #1a1a1a;        /* Dark Gray Background */
+  --foreground: #e8e6e0;        /* Light Beige Text */
+  
+  /* Accent Colors */
+  --medium-gray: #4a4a4a;       /* Medium Gray */
+  --accent-gray: #707070;       /* Accent Gray */
+  --deep-black: #0d0d0d;        /* Deep Black */
 }
 
 @theme inline {
-  /* تعريف الألوان كـ Tailwind utility classes */
+  /* Define colors as Tailwind utility classes */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-medium-gray: var(--medium-gray);
+  --color-accent-gray: var(--accent-gray);
+  --color-deep-black: var(--deep-black);
 
-  /* علشان تقدر تستخدمهم بسهولة */
-  --color-cream: var(--foreground);
-  --color-dark-turquoise: var(--background);
-
-  /* لو عايز تستخدمهم في text/background */
+  /* Font families */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

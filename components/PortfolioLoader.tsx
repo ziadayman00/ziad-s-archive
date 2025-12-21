@@ -93,14 +93,14 @@ export default function PortfolioLoader() {
   const currentPhaseData = phases.find(p => p.name === currentPhase);
 
   return (
-    <div className={`fixed inset-0 z-[200] bg-[#001b24] transition-opacity duration-700 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+    <div className={`fixed inset-0 z-[200] bg-background transition-opacity duration-700 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
       
       {/* Grid Background */}
       <div className="absolute inset-0" style={{ opacity: 0.03 }}>
         <div
           className="h-full w-full"
           style={{
-            backgroundImage: `linear-gradient(#fafbd7 1px, transparent 1px), linear-gradient(90deg, #fafbd7 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(#e8e6e0 1px, transparent 1px), linear-gradient(90deg, #e8e6e0 1px, transparent 1px)`,
             backgroundSize: '80px 80px',
           }}
         />
@@ -108,7 +108,7 @@ export default function PortfolioLoader() {
 
       {/* 🌟 SCATTERED BACKGROUND LOADING ITEMS (Subtle Terminal Messages) */}
       <div className="absolute inset-0 p-10 overflow-hidden pointer-events-none">
-        <div className="font-mono text-[8px] sm:text-[10px] text-[#fafbd7] w-full h-full relative">
+        <div className="font-mono text-[8px] sm:text-[10px] text-foreground w-full h-full relative">
           {loadingItems.map((item, index) => (
             <div
               key={item.id}
@@ -127,7 +127,7 @@ export default function PortfolioLoader() {
             </div>
           ))}
           {progress < 100 && (
-            <div className="absolute top-[80%] left-[5%] flex items-center gap-2 text-[#fafbd7] opacity-10">
+            <div className="absolute top-[80%] left-[5%] flex items-center gap-2 text-foreground opacity-10">
               <span className="text-green-400">&gt;</span>
               <span className="animate-pulse">PROCESSING...</span>
               <span className="animate-blink">_</span>
@@ -139,13 +139,13 @@ export default function PortfolioLoader() {
 
 
       {/* Corner Markers - More Prominent */}
-      <div className="absolute top-6 sm:top-8 left-6 sm:left-8 w-16 h-16 border-t-2 border-l-2 border-[#fafbd7]" style={{ opacity: 0.15 }} />
-      <div className="absolute top-6 sm:top-8 right-6 sm:right-8 w-16 h-16 border-t-2 border-r-2 border-[#fafbd7]" style={{ opacity: 0.15 }} />
-      <div className="absolute bottom-6 sm:bottom-8 left-6 sm:left-8 w-16 h-16 border-b-2 border-l-2 border-[#fafbd7]" style={{ opacity: 0.15 }} />
-      <div className="absolute bottom-6 sm:bottom-8 right-6 sm:right-8 w-16 h-16 border-b-2 border-r-2 border-[#fafbd7]" style={{ opacity: 0.15 }} />
+      <div className="absolute top-6 sm:top-8 left-6 sm:left-8 w-16 h-16 border-t-2 border-l-2 border-foreground" style={{ opacity: 0.15 }} />
+      <div className="absolute top-6 sm:top-8 right-6 sm:right-8 w-16 h-16 border-t-2 border-r-2 border-foreground" style={{ opacity: 0.15 }} />
+      <div className="absolute bottom-6 sm:bottom-8 left-6 sm:left-8 w-16 h-16 border-b-2 border-l-2 border-foreground" style={{ opacity: 0.15 }} />
+      <div className="absolute bottom-6 sm:bottom-8 right-6 sm:right-8 w-16 h-16 border-b-2 border-r-2 border-foreground" style={{ opacity: 0.15 }} />
 
       {/* Archive Labels */}
-      <div className="absolute top-10 sm:top-12 right-10 sm:right-12 text-[#fafbd7] text-[10px] tracking-[0.3em] font-mono text-right" style={{ opacity: 0.25 }}>
+      <div className="absolute top-10 sm:top-12 right-10 sm:right-12 text-foreground text-[10px] tracking-[0.3em] font-mono text-right" style={{ opacity: 0.25 }}>
         <div>V4.0</div>
         <div className="mt-1 text-[8px]">————</div>
       </div>
@@ -160,7 +160,7 @@ export default function PortfolioLoader() {
               alt="Ziad Ayman"
               width={384}
               height={96}
-              className="w-full h-auto"
+              className="w-full h-auto logo-recolor"
               style={{ opacity: 0.9 }}
               priority
             />
@@ -172,8 +172,8 @@ export default function PortfolioLoader() {
           {/* Status Text */}
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center gap-3">
-              <div className="w-1.5 h-1.5 bg-[#fafbd7] animate-pulse" style={{ opacity: 0.6 }} />
-              <p className="text-[#fafbd7] text-xs sm:text-sm tracking-[0.2em] font-mono" style={{ opacity: 0.5 }}>
+              <div className="w-1.5 h-1.5 bg-[#e8e6e0] animate-pulse" style={{ opacity: 0.6 }} />
+              <p className="text-foreground text-xs sm:text-sm tracking-[0.2em] font-mono" style={{ opacity: 0.5 }}>
                 {/* Use optional chaining because currentPhaseData might be undefined initially */}
                 {currentPhaseData?.text}
               </p>
@@ -183,13 +183,13 @@ export default function PortfolioLoader() {
           {/* Progress Bar Container */}
           <div className="relative px-2">
             {/* Main Progress Bar Background */}
-            <div className="relative h-1 border border-[#fafbd7]" style={{ backgroundColor: 'rgba(250, 251, 215, 0.1)' }}>
+            <div className="relative h-1 border border-foreground" style={{ backgroundColor: 'rgba(250, 251, 215, 0.1)' }}>
               {/* Progress Fill */}
               <div
                 className="absolute top-0 left-0 h-full transition-all duration-200 ease-linear"
                 style={{
                   width: `${progress}%`,
-                  backgroundColor: '#fafbd7',
+                  backgroundColor: '#e8e6e0',
                   opacity: 0.7
                 }}
               />
@@ -198,16 +198,16 @@ export default function PortfolioLoader() {
                 className="absolute top-0 h-full w-[2px] transition-all duration-200 ease-linear"
                 style={{
                   left: `${progress}%`,
-                  backgroundColor: '#fafbd7',
+                  backgroundColor: '#e8e6e0',
                   opacity: 1,
-                  boxShadow: '0 0 8px #fafbd7, 0 0 12px #fafbd7',
+                  boxShadow: '0 0 8px #e8e6e0, 0 0 12px #e8e6e0',
                   transform: 'translateX(-1px)'
                 }}
               />
             </div>
 
             {/* Progress Percentage */}
-            <div className="flex items-center justify-between mt-3 text-[#fafbd7]">
+            <div className="flex items-center justify-between mt-3 text-foreground">
               <span className="text-[10px] font-mono" style={{ opacity: 0.3 }}>
                 00:00
               </span>
@@ -230,13 +230,13 @@ export default function PortfolioLoader() {
                 <div
                   className={`w-2 h-2 transition-all duration-300 ${
                     progress >= phase.progress
-                      ? 'bg-[#fafbd7]'
-                      : 'border border-[#fafbd7]'
+                      ? 'bg-[#e8e6e0]'
+                      : 'border border-foreground'
                   }`}
                   style={{ opacity: progress >= phase.progress ? 0.7 : 0.2 }}
                 />
                 <span
-                  className="text-[#fafbd7] text-[9px] tracking-[0.15em] font-mono"
+                  className="text-foreground text-[9px] tracking-[0.15em] font-mono"
                   style={{ opacity: progress >= phase.progress ? 0.4 : 0.2 }}
                 >
                   0{index + 1}
@@ -248,7 +248,7 @@ export default function PortfolioLoader() {
 
         {/* Bottom Info */}
         <div className="absolute bottom-8 sm:bottom-12 text-center">
-          <p className="text-[#fafbd7] text-[9px] sm:text-[10px] tracking-[0.25em] font-mono" style={{ opacity: 0.25 }}>
+          <p className="text-foreground text-[9px] sm:text-[10px] tracking-[0.25em] font-mono" style={{ opacity: 0.25 }}>
             PORTFOLIO 2025 • REACT • NEXT.JS
           </p>
         </div>
@@ -265,6 +265,9 @@ export default function PortfolioLoader() {
         }
         .animate-blink {
           animation: blink 1s infinite;
+        }
+        :global(.logo-recolor) {
+          filter: brightness(0.92) saturate(0.5) hue-rotate(10deg);
         }
       `}</style>
     </div>
