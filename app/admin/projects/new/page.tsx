@@ -37,6 +37,7 @@ export default function NewProject() {
 
   const [techInput, setTechInput] = useState('');
   const [featureInput, setFeatureInput] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -82,6 +83,7 @@ export default function NewProject() {
           ...prev,
           images: [...prev.images, ...data.urls],
         }));
+        setErrors(prev => ({ ...prev, images: '' }));
       } else {
         alert('Failed to upload images');
       }
@@ -106,6 +108,7 @@ export default function NewProject() {
         tech: [...prev.tech, techInput.trim()],
       }));
       setTechInput('');
+      setErrors(prev => ({ ...prev, tech: '' }));
     }
   };
 
@@ -133,10 +136,29 @@ export default function NewProject() {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.subtitle.trim()) newErrors.subtitle = 'Subtitle is required';
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (formData.images.length === 0) newErrors.images = 'At least one image is required';
+    if (formData.tech.length === 0) newErrors.tech = 'At least one tech/tool is required';
+    if (!formData.categoryId) newErrors.categoryId = 'Category is required';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    
+    if (!validateForm()) {
+      alert('Please fill in all required fields');
+      return;
+    }
 
+    setLoading(true);
     const token = localStorage.getItem('admin_token');
 
     try {
@@ -161,27 +183,26 @@ export default function NewProject() {
     }
   };
 
-
   const selectedCategory = categories.find(c => c.id === formData.categoryId);
   const isDesignCategory = selectedCategory?.slug === 'design' || selectedCategory?.slug === 'branding';
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="border-b border-foreground border-opacity-10 sticky top-0 bg-background z-50">
-        <div className="max-w-[1200px] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-black text-foreground tracking-tight">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-2xl font-black text-foreground tracking-tight">
                 NEW PROJECT
               </h1>
-              <p className="text-xs text-foreground opacity-40 font-mono mt-1">
+              <p className="text-[10px] sm:text-xs text-foreground opacity-40 font-mono mt-0.5 sm:mt-1 hidden sm:block">
                 Create a new portfolio project
               </p>
             </div>
             <Link
               href="/admin/dashboard"
-              className="px-6 py-2.5 border border-foreground border-opacity-30 text-foreground text-xs font-bold tracking-[0.15em] hover:bg-foreground hover:text-background transition-all"
+              className="px-3 sm:px-6 py-2 sm:py-2.5 border border-foreground border-opacity-30 text-foreground text-[10px] sm:text-xs font-bold tracking-[0.15em] hover:bg-foreground hover:text-background"
             >
               ← BACK
             </Link>
@@ -189,79 +210,96 @@ export default function NewProject() {
         </div>
       </header>
 
-      <div className="max-w-[1200px] mx-auto px-6 py-12">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6 sm:py-12">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           {/* Basic Info */}
-          <div className="border border-foreground border-opacity-10 p-8">
-            <h2 className="text-lg font-bold text-foreground mb-6 tracking-tight">
+          <div className="border border-foreground border-opacity-10 p-4 sm:p-8">
+            <h2 className="text-base sm:text-lg font-bold text-foreground mb-4 sm:mb-6 tracking-tight">
               BASIC INFORMATION
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="md:col-span-2">
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
+            <div className="space-y-4 sm:space-y-6">
+              {/* Title */}
+              <div>
+                <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
                   PROJECT TITLE *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
+                  onChange={(e) => {
+                    setFormData({ ...formData, title: e.target.value });
+                    setErrors(prev => ({ ...prev, title: '' }));
+                  }}
+                  className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border ${errors.title ? 'border-red-500' : 'border-foreground border-opacity-20'} text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none`}
                   placeholder="Amazing Project"
                 />
+                {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
+              {/* Subtitle */}
+              <div>
+                <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
                   SUBTITLE *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.subtitle}
-                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-                  className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
+                  onChange={(e) => {
+                    setFormData({ ...formData, subtitle: e.target.value });
+                    setErrors(prev => ({ ...prev, subtitle: '' }));
+                  }}
+                  className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border ${errors.subtitle ? 'border-red-500' : 'border-foreground border-opacity-20'} text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none`}
                   placeholder="Brief description of the project"
                 />
+                {errors.subtitle && <p className="text-red-500 text-xs mt-1">{errors.subtitle}</p>}
               </div>
 
+              {/* Year & Sector */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div>
+                  <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
+                    YEAR *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.year}
+                    onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border border-foreground border-opacity-20 text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none"
+                    placeholder="2025"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
+                    SECTOR *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.sector}
+                    onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border border-foreground border-opacity-20 text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none"
+                    placeholder="Full-Stack, Design, etc."
+                  />
+                </div>
+              </div>
+
+              {/* Category */}
               <div>
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
-                  YEAR *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.year}
-                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                  className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
-                  placeholder="2025"
-                />
-              </div>
-
-              <div>
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
-                  SECTOR *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.sector}
-                  onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
-                  className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
-                  placeholder="Full-Stack, Design, etc."
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
+                <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
                   CATEGORY *
                 </label>
                 <select
                   required
                   value={formData.categoryId}
-                  onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                  className="w-full px-4 py-3 bg-background border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
+                  onChange={(e) => {
+                    setFormData({ ...formData, categoryId: e.target.value });
+                    setErrors(prev => ({ ...prev, categoryId: '' }));
+                  }}
+                  className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border ${errors.categoryId ? 'border-red-500' : 'border-foreground border-opacity-20'} text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none`}
                 >
                   <option value="">Select category...</option>
                   {categories.map((cat) => (
@@ -270,13 +308,15 @@ export default function NewProject() {
                     </option>
                   ))}
                 </select>
+                {errors.categoryId && <p className="text-red-500 text-xs mt-1">{errors.categoryId}</p>}
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
+              {/* Status Checkboxes */}
+              <div>
+                <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
                   STATUS
                 </label>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -284,7 +324,7 @@ export default function NewProject() {
                       onChange={(e) => setFormData({ ...formData, inProgress: e.target.checked })}
                       className="w-4 h-4"
                     />
-                    <span className="text-sm text-foreground">In Progress</span>
+                    <span className="text-xs sm:text-sm text-foreground">In Progress</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -293,114 +333,126 @@ export default function NewProject() {
                       onChange={(e) => setFormData({ ...formData, comingSoon: e.target.checked })}
                       className="w-4 h-4"
                     />
-                    <span className="text-sm text-foreground">Coming Soon</span>
+                    <span className="text-xs sm:text-sm text-foreground">Coming Soon</span>
                   </label>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
-                  RESPONSIBILITY
-                </label>
-                <input
-                  type="text"
-                  value={formData.responsibility}
-                  onChange={(e) => setFormData({ ...formData, responsibility: e.target.value })}
-                  className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
-                  placeholder="Development, UI/UX, Architecture"
-                />
-              </div>
-
-              <div>
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
-                  IMPACT
-                </label>
-                <input
-                  type="text"
-                  value={formData.impact}
-                  onChange={(e) => setFormData({ ...formData, impact: e.target.value })}
-                  className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
-                  placeholder="1000+ daily users"
-                />
-              </div>
-
-              <div>
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
-                  {isDesignCategory ? 'PROJECT LINK (e.g. Behance)' : 'LIVE URL'}
-                </label>
-                <input
-                  type="url"
-                  value={formData.live}
-                  onChange={(e) => setFormData({ ...formData, live: e.target.value })}
-                  className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
-                  placeholder="https://example.com"
-                />
-              </div>
-
-              {!isDesignCategory && (
+              {/* Responsibility & Impact */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
-                    GITHUB URL
+                  <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
+                    RESPONSIBILITY
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.responsibility}
+                    onChange={(e) => setFormData({ ...formData, responsibility: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border border-foreground border-opacity-20 text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none"
+                    placeholder="Development, UI/UX"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
+                    IMPACT
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.impact}
+                    onChange={(e) => setFormData({ ...formData, impact: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border border-foreground border-opacity-20 text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none"
+                    placeholder="1000+ users"
+                  />
+                </div>
+              </div>
+
+              {/* Links */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div>
+                  <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
+                    {isDesignCategory ? 'PROJECT LINK' : 'LIVE URL'}
                   </label>
                   <input
                     type="url"
-                    value={formData.github}
-                    onChange={(e) => setFormData({ ...formData, github: e.target.value })}
-                    className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
-                    placeholder="https://github.com/..."
+                    value={formData.live}
+                    onChange={(e) => setFormData({ ...formData, live: e.target.value })}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border border-foreground border-opacity-20 text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none"
+                    placeholder="https://example.com"
                   />
                 </div>
-              )}
 
-              <div className="md:col-span-2">
-                <label className="block text-foreground text-xs tracking-[0.2em] opacity-40 font-mono mb-3">
+                {!isDesignCategory && (
+                  <div>
+                    <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
+                      GITHUB URL
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.github}
+                      onChange={(e) => setFormData({ ...formData, github: e.target.value })}
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border border-foreground border-opacity-20 text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none"
+                      placeholder="https://github.com/..."
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
                   DESCRIPTION *
                 </label>
                 <textarea
                   required
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, description: e.target.value });
+                    setErrors(prev => ({ ...prev, description: '' }));
+                  }}
                   rows={4}
-                  className="w-full px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none resize-none"
+                  className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border ${errors.description ? 'border-red-500' : 'border-foreground border-opacity-20'} text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none resize-none`}
                   placeholder="Detailed project description..."
                 />
+                {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
               </div>
             </div>
           </div>
 
           {/* Tech Stack */}
-          <div className="border border-foreground border-opacity-10 p-8">
-            <h2 className="text-lg font-bold text-foreground mb-6 tracking-tight">
+          <div className="border border-foreground border-opacity-10 p-4 sm:p-8">
+            <h2 className="text-base sm:text-lg font-bold text-foreground mb-4 sm:mb-6 tracking-tight">
               {isDesignCategory ? 'TOOLS USED' : 'TECH STACK'} *
             </h2>
-            <div className="flex gap-3 mb-4">
+            <div className="flex gap-2 sm:gap-3 mb-4">
               <input
                 type="text"
                 value={techInput}
                 onChange={(e) => setTechInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTech())}
-                className="flex-1 px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
-                placeholder={isDesignCategory ? "Add tool (e.g. Figma, Photoshop)..." : "Add technology..."}
+                className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border border-foreground border-opacity-20 text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none"
+                placeholder={isDesignCategory ? "Add tool..." : "Add technology..."}
               />
               <button
                 type="button"
                 onClick={addTech}
-                className="px-6 py-3 bg-foreground text-background text-xs font-bold tracking-[0.15em]"
+                className="px-4 sm:px-6 py-2.5 sm:py-3 bg-foreground text-background text-[10px] sm:text-xs font-bold tracking-[0.15em] whitespace-nowrap"
               >
                 ADD
               </button>
             </div>
+            {errors.tech && <p className="text-red-500 text-xs mb-3">{errors.tech}</p>}
             <div className="flex flex-wrap gap-2">
               {formData.tech.map((tech, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 px-3 py-2 border border-foreground border-opacity-20 text-foreground text-sm"
+                  className="flex items-center gap-2 px-3 py-1.5 sm:py-2 border border-foreground border-opacity-20 text-foreground text-xs sm:text-sm"
                 >
-                  <span>{tech}</span>
+                  <span className="break-all">{tech}</span>
                   <button
                     type="button"
                     onClick={() => removeTech(index)}
-                    className="text-foreground opacity-40 hover:opacity-100"
+                    className="text-foreground opacity-40 hover:opacity-100 text-lg leading-none"
                   >
                     ×
                   </button>
@@ -410,23 +462,23 @@ export default function NewProject() {
           </div>
 
           {/* Features */}
-          <div className="border border-foreground border-opacity-10 p-8">
-            <h2 className="text-lg font-bold text-foreground mb-6 tracking-tight">
+          <div className="border border-foreground border-opacity-10 p-4 sm:p-8">
+            <h2 className="text-base sm:text-lg font-bold text-foreground mb-4 sm:mb-6 tracking-tight">
               KEY FEATURES
             </h2>
-            <div className="flex gap-3 mb-4">
+            <div className="flex gap-2 sm:gap-3 mb-4">
               <input
                 type="text"
                 value={featureInput}
                 onChange={(e) => setFeatureInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
-                className="flex-1 px-4 py-3 bg-transparent border border-foreground border-opacity-20 text-foreground focus:border-opacity-50 focus:outline-none"
+                className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border border-foreground border-opacity-20 text-foreground text-sm sm:text-base focus:border-opacity-50 focus:outline-none"
                 placeholder="Add feature..."
               />
               <button
                 type="button"
                 onClick={addFeature}
-                className="px-6 py-3 bg-foreground text-background text-xs font-bold tracking-[0.15em]"
+                className="px-4 sm:px-6 py-2.5 sm:py-3 bg-foreground text-background text-[10px] sm:text-xs font-bold tracking-[0.15em] whitespace-nowrap"
               >
                 ADD
               </button>
@@ -435,13 +487,13 @@ export default function NewProject() {
               {formData.features.map((feature, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-3 px-4 py-3 border border-foreground border-opacity-10"
+                  className="flex items-start gap-3 px-3 sm:px-4 py-2.5 sm:py-3 border border-foreground border-opacity-10"
                 >
-                  <span className="flex-1 text-foreground text-sm">{feature}</span>
+                  <span className="flex-1 text-foreground text-xs sm:text-sm break-words">{feature}</span>
                   <button
                     type="button"
                     onClick={() => removeFeature(index)}
-                    className="text-foreground opacity-40 hover:opacity-100"
+                    className="text-foreground opacity-40 hover:opacity-100 text-lg leading-none flex-shrink-0"
                   >
                     ×
                   </button>
@@ -451,13 +503,13 @@ export default function NewProject() {
           </div>
 
           {/* Images */}
-          <div className="border border-foreground border-opacity-10 p-8">
-            <h2 className="text-lg font-bold text-foreground mb-6 tracking-tight">
+          <div className="border border-foreground border-opacity-10 p-4 sm:p-8">
+            <h2 className="text-base sm:text-lg font-bold text-foreground mb-4 sm:mb-6 tracking-tight">
               PROJECT IMAGES *
             </h2>
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <label className="block w-full cursor-pointer">
-                <div className="border-2 border-dashed border-foreground border-opacity-20 p-12 text-center hover:border-opacity-40 transition-colors">
+                <div className="border-2 border-dashed border-foreground border-opacity-20 p-8 sm:p-12 text-center hover:border-opacity-40">
                   <input
                     type="file"
                     multiple
@@ -466,21 +518,22 @@ export default function NewProject() {
                     className="hidden"
                   />
                   {uploadingImages ? (
-                    <p className="text-foreground opacity-60">Uploading...</p>
+                    <p className="text-foreground opacity-60 text-sm">Uploading...</p>
                   ) : (
                     <>
-                      <p className="text-foreground opacity-60 mb-2">
+                      <p className="text-foreground opacity-60 mb-2 text-sm">
                         Click to upload images
                       </p>
-                      <p className="text-foreground opacity-40 text-sm">
+                      <p className="text-foreground opacity-40 text-xs sm:text-sm">
                         or drag and drop
                       </p>
                     </>
                   )}
                 </div>
               </label>
+              {errors.images && <p className="text-red-500 text-xs mt-2">{errors.images}</p>}
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {formData.images.map((url, index) => (
                 <div key={index} className="relative group">
                   <img
@@ -491,7 +544,7 @@ export default function NewProject() {
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-1 right-1 sm:top-2 sm:right-2 w-6 h-6 sm:w-7 sm:h-7 bg-red-500 text-white flex items-center justify-center text-lg"
                   >
                     ×
                   </button>
@@ -500,18 +553,18 @@ export default function NewProject() {
             </div>
           </div>
 
-          {/* Submit */}
-          <div className="flex gap-4">
+          {/* Submit Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sticky bottom-0 bg-background py-4 border-t border-foreground border-opacity-10 -mx-4 sm:-mx-6 px-4 sm:px-6">
             <button
               type="submit"
               disabled={loading || formData.images.length === 0}
-              className="flex-1 py-4 bg-foreground text-background font-bold text-sm tracking-[0.2em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 py-3 sm:py-4 bg-foreground text-background font-bold text-xs sm:text-sm tracking-[0.2em] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'CREATING...' : 'CREATE PROJECT'}
             </button>
             <Link
               href="/admin/dashboard"
-              className="px-8 py-4 border border-foreground border-opacity-30 text-foreground font-bold text-sm tracking-[0.2em] hover:bg-foreground hover:text-background transition-all"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border border-foreground border-opacity-30 text-foreground font-bold text-xs sm:text-sm tracking-[0.2em] hover:bg-foreground hover:text-background text-center"
             >
               CANCEL
             </Link>
