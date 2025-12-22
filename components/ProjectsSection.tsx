@@ -53,6 +53,7 @@ interface ProjectsData {
 const ProjectsSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -65,7 +66,7 @@ const ProjectsSection: React.FC = () => {
     fetchAllProjects();
     
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 1024);
     };
     
     checkMobile();
@@ -150,9 +151,14 @@ const ProjectsSection: React.FC = () => {
     ? projects 
     : projects.filter(p => p.category?.slug === activeCategory);
 
-  const handleMouseEnter = (index: number) => {
+  const handleMouseMove = (e: React.MouseEvent, index: number) => {
     if (!isMobile) {
       setHoveredProject(index);
+      const rect = e.currentTarget.getBoundingClientRect();
+      setMousePosition({ 
+        x: e.clientX, 
+        y: e.clientY 
+      });
     }
   };
 
@@ -217,7 +223,7 @@ const ProjectsSection: React.FC = () => {
   return (
     <section
       id="projects"
-      className="relative min-h-screen bg-background py-20 sm:py-28 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
+      className="relative min-h-screen bg-background py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
     >
       {/* Subtle Grid Background */}
       <div className="absolute inset-0 opacity-[0.03]">
@@ -231,48 +237,82 @@ const ProjectsSection: React.FC = () => {
       </div>
 
       {/* Archive Markers */}
-      <div className="absolute top-8 sm:top-12 left-4 sm:left-6 lg:left-12 xl:left-16 text-foreground opacity-20 text-[10px] tracking-[0.3em] font-mono">
+      <div className="absolute top-6 sm:top-8 md:top-12 left-4 sm:left-6 lg:left-12 xl:left-16 text-foreground opacity-20 text-[10px] tracking-[0.3em] font-mono">
         <div>SEC.02</div>
         <div className="mt-1 text-[8px]">————</div>
       </div>
 
+      {/* Floating Project Image Preview (Desktop Only) */}
+      {!isMobile && hoveredProject !== null && filteredProjects[hoveredProject]?.images?.[0] && (
+        <div
+          className="fixed pointer-events-none z-50 transition-opacity duration-300"
+          style={{
+            left: `${mousePosition.x + 20}px`,
+            top: `${mousePosition.y + 20}px`,
+            opacity: hoveredProject !== null ? 1 : 0,
+          }}
+        >
+          <div className="relative">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-foreground/20 to-transparent blur-xl transform scale-110" />
+            {/* Image container */}
+            <div className="relative w-72 h-48 rounded overflow-hidden shadow-2xl border border-foreground/10 bg-background">
+              <img
+                src={filteredProjects[hoveredProject].images[0]}
+                alt={filteredProjects[hoveredProject].title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              {/* Project title overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                <p className="text-xs font-mono tracking-wider opacity-80">
+                  {filteredProjects[hoveredProject].title}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="relative z-10 max-w-[1600px] mx-auto">
         {/* Archive Header */}
-        <div className="mb-16 md:mb-24">
-          <div className="flex items-center gap-3 sm:gap-4 mb-8">
-            <div className="w-8 sm:w-12 h-[1px] bg-foreground opacity-30" />
-            <span className="text-foreground text-[9px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
+        <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-6 sm:mb-8">
+            <div className="w-6 sm:w-8 md:w-12 h-[1px] bg-foreground opacity-30" />
+            <span className="text-foreground text-[9px] sm:text-[10px] md:text-xs tracking-[0.2em] sm:tracking-[0.25em] md:tracking-[0.3em] opacity-40 font-mono whitespace-nowrap">
               PROJECT ARCHIVE
             </span>
           </div>
 
-          <h2 className="text-[clamp(3rem,10vw,8rem)] font-black text-foreground leading-[0.9] tracking-[-0.01em] mb-6">
+          <h2 className="text-[clamp(2.5rem,12vw,8rem)] font-black text-foreground leading-[0.9] tracking-[-0.02em] mb-4 sm:mb-6">
             SELECTED
             <br />
             <span className="inline-block mt-1 sm:mt-2 md:mt-3">WORKS</span>
           </h2>
 
-          <div className="flex items-center gap-3 sm:gap-4 max-w-2xl mb-8">
-            <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent to-foreground opacity-30" />
-            <p className="text-foreground opacity-50 text-xs sm:text-sm font-light tracking-wide">
+          <div className="flex items-start sm:items-center gap-2 sm:gap-3 md:gap-4 max-w-2xl mb-6 sm:mb-8">
+            <div className="h-[1px] w-12 sm:w-16 md:w-24 bg-gradient-to-r from-transparent to-foreground opacity-30 flex-shrink-0 mt-2 sm:mt-0" />
+            <p className="text-foreground opacity-50 text-xs sm:text-sm leading-relaxed font-light tracking-wide">
               A curated collection of projects spanning full-stack applications and creative explorations
             </p>
           </div>
 
           {/* Archive Stats */}
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 text-foreground opacity-40 text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] font-mono">
             <span>TOTAL: {filteredProjects.length}</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline">FILTER: {getCategoryLabel(activeCategory)}</span>
+            <span>•</span>
+            <span>FILTER: {getCategoryLabel(activeCategory)}</span>
           </div>
         </div>
 
-        {/* Filter Tabs - Minimalist */}
-        <div className="mb-12 md:mb-16">
-          <div className="flex flex-wrap gap-2">
+        {/* Filter Tabs */}
+        <div className="mb-8 sm:mb-10 md:mb-12 lg:mb-16 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex gap-2 min-w-max sm:min-w-0 sm:flex-wrap">
             <button
               onClick={() => setActiveCategory("all")}
-              className={`px-4 py-2 text-[10px] font-mono tracking-[0.15em] transition-all duration-300 ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[9px] sm:text-[10px] font-mono tracking-[0.12em] sm:tracking-[0.15em] transition-all duration-300 whitespace-nowrap ${
                 activeCategory === "all"
                   ? "bg-foreground text-background"
                   : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10 hover:text-foreground"
@@ -285,7 +325,7 @@ const ProjectsSection: React.FC = () => {
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.slug)}
-                className={`px-4 py-2 text-[10px] font-mono tracking-[0.15em] transition-all duration-300 ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[9px] sm:text-[10px] font-mono tracking-[0.12em] sm:tracking-[0.15em] transition-all duration-300 whitespace-nowrap ${
                   activeCategory === category.slug
                     ? "bg-foreground text-background"
                     : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10 hover:text-foreground"
@@ -314,20 +354,20 @@ const ProjectsSection: React.FC = () => {
           </div>
         ) : (
           <>
-            {/* Projects Archive List - Sleeker Design */}
-            <div className="space-y-px">
+            {/* Projects List */}
+            <div className="space-y-0">
               {filteredProjects.map((project, index) => (
-                <a
+                <Link
                   key={project.id}
                   href={getProjectLink(project)}
                   onClick={(e) => handleProjectClick(e, project)}
-                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseMove={(e) => handleMouseMove(e, index)}
                   onMouseLeave={handleMouseLeave}
                   className={`block group relative transition-all duration-300 cursor-pointer overflow-hidden ${
                     hoveredProject === index ? 'bg-foreground/[0.02]' : ''
                   } ${clickedProjectId === project.id ? 'bg-foreground/5' : ''}`}
                 >
-                  {/* Enhanced Loading Animation */}
+                  {/* Loading Animation */}
                   {clickedProjectId === project.id && (
                     <>
                       <div 
@@ -372,106 +412,164 @@ const ProjectsSection: React.FC = () => {
                     }
                   `}</style>
 
-                  {/* Main Row - Thinner & Reordered */}
-                  <div className={`py-4 sm:py-5 grid grid-cols-12 gap-3 sm:gap-4 md:gap-6 items-center transition-all duration-300 border-b border-foreground/5 ${
+                  {/* Main Content */}
+                  <div className={`py-4 sm:py-5 md:py-6 transition-all duration-300 border-b border-foreground/5 ${
                     clickedProjectId === project.id ? 'opacity-0' : ''
                   }`}>
                     
-                    {/* Index + Year */}
-                    <div className="col-span-2 sm:col-span-1 flex items-center gap-2">
-                      <span className="text-foreground/30 group-hover:text-foreground/100 text-sm font-mono transition-all duration-300">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                    </div>
-
-                    {/* Title & Category */}
-                    <div className="col-span-10 sm:col-span-5 md:col-span-4">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        {project.category && (
-                          <span className="text-foreground/30 text-[9px] tracking-[0.12em] font-mono uppercase">
-                            {project.category.name}
+                    {/* Mobile Layout */}
+                    <div className="lg:hidden space-y-3">
+                      {/* Index + Status */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-foreground/30 group-hover:text-foreground/100 text-sm font-mono transition-all duration-300">
+                            {String(index + 1).padStart(2, "0")}
                           </span>
-                        )}
-                        <span className="text-foreground/20 text-[9px]">•</span>
-                        <span className="text-foreground/30 text-[9px] tracking-[0.12em] font-mono">
-                          {project.year}
+                          <div className="flex items-center gap-2">
+                            {project.category && (
+                              <span className="text-foreground/30 text-[9px] tracking-[0.12em] font-mono uppercase">
+                                {project.category.name}
+                              </span>
+                            )}
+                            <span className="text-foreground/20 text-[9px]">•</span>
+                            <span className="text-foreground/30 text-[9px] tracking-[0.12em] font-mono">
+                              {project.year}
+                            </span>
+                          </div>
+                        </div>
+                        <span
+                          className={`text-[9px] px-2.5 py-1 font-mono tracking-[0.1em] ${getStatusStyle(project)}`}
+                        >
+                          {getStatusLabel(project)}
                         </span>
                       </div>
-                      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight leading-tight group-hover:translate-x-1 transition-transform duration-300">
+
+                      {/* Title */}
+                      <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight leading-tight group-hover:translate-x-1 transition-transform duration-300">
                         {project.title}
                       </h3>
-                    </div>
 
-                    {/* Tech Stack - Compact */}
-                    <div className="hidden md:flex col-span-3 items-center gap-1.5">
-                      {project.tech.slice(0, 3).map((tech, i) => (
-                        <span
-                          key={i}
-                          className="text-[9px] px-2 py-0.5 bg-foreground/5 text-foreground/50 font-mono"
-                        >
-                          {tech}
+                      {/* Subtitle */}
+                      <p className="text-xs text-foreground/60 leading-relaxed">
+                        {project.subtitle}
+                      </p>
+
+                      {/* Sector */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-foreground/50">
+                          {project.sector}
                         </span>
-                      ))}
-                      {project.tech.length > 3 && (
-                        <span className="text-[9px] text-foreground/30 font-mono">
-                          +{project.tech.length - 3}
-                        </span>
+                      </div>
+
+                      {/* Tech Stack */}
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.tech.slice(0, 4).map((tech, i) => (
+                          <span
+                            key={i}
+                            className="text-[9px] px-2 py-0.5 bg-foreground/5 text-foreground/50 font-mono"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                        {project.tech.length > 4 && (
+                          <span className="text-[9px] text-foreground/30 font-mono">
+                            +{project.tech.length - 4}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Mobile Image Preview */}
+                      {project.images?.[0] && (
+                        <div className="w-full h-32 sm:h-40 rounded overflow-hidden bg-foreground/5 mt-2">
+                          <img
+                            src={project.images[0]}
+                            alt={project.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        </div>
                       )}
                     </div>
 
-                    {/* Sector - Compact */}
-                    <div className="hidden lg:block col-span-2">
-                      <span className="text-xs text-foreground/50">
-                        {project.sector}
-                      </span>
-                    </div>
+                    {/* Desktop Layout */}
+                    <div className="hidden lg:grid grid-cols-12 gap-4 md:gap-6 items-center">
+                      {/* Index */}
+                      <div className="col-span-1 flex items-center gap-2">
+                        <span className="text-foreground/30 group-hover:text-foreground/100 text-sm font-mono transition-all duration-300">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
 
-                    {/* Status - Smaller */}
-                    <div className="col-span-12 sm:col-span-5 md:col-span-2 flex justify-end">
-                      <span
-                        className={`text-[9px] px-2.5 py-1 font-mono tracking-[0.1em] ${getStatusStyle(project)}`}
-                      >
-                        {getStatusLabel(project)}
-                      </span>
+                      {/* Title & Category */}
+                      <div className="col-span-4">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          {project.category && (
+                            <span className="text-foreground/30 text-[9px] tracking-[0.12em] font-mono uppercase">
+                              {project.category.name}
+                            </span>
+                          )}
+                          <span className="text-foreground/20 text-[9px]">•</span>
+                          <span className="text-foreground/30 text-[9px] tracking-[0.12em] font-mono">
+                            {project.year}
+                          </span>
+                        </div>
+                        <h3 className="text-xl md:text-2xl font-bold text-foreground tracking-tight leading-tight group-hover:translate-x-1 transition-transform duration-300">
+                          {project.title}
+                        </h3>
+                      </div>
+
+                      {/* Tech Stack */}
+                      <div className="col-span-3 flex items-center gap-1.5">
+                        {project.tech.slice(0, 3).map((tech, i) => (
+                          <span
+                            key={i}
+                            className="text-[9px] px-2 py-0.5 bg-foreground/5 text-foreground/50 font-mono"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                        {project.tech.length > 3 && (
+                          <span className="text-[9px] text-foreground/30 font-mono">
+                            +{project.tech.length - 3}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Sector */}
+                      <div className="col-span-2">
+                        <span className="text-xs text-foreground/50">
+                          {project.sector}
+                        </span>
+                      </div>
+
+                      {/* Status */}
+                      <div className="col-span-2 flex justify-end">
+                        <span
+                          className={`text-[9px] px-2.5 py-1 font-mono tracking-[0.1em] ${getStatusStyle(project)}`}
+                        >
+                          {getStatusLabel(project)}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Hover indicator */}
                     <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
-
-                  {/* Mobile Tech Stack */}
-                  <div className="md:hidden px-4 pb-3 -mt-1">
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.tech.slice(0, 4).map((tech, i) => (
-                        <span
-                          key={i}
-                          className="text-[9px] px-2 py-0.5 bg-foreground/5 text-foreground/50 font-mono"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                      {project.tech.length > 4 && (
-                        <span className="text-[9px] text-foreground/30 font-mono">
-                          +{project.tech.length - 4}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </a>
+                </Link>
               ))}
             </div>
 
             {/* Archive Footer */}
-            <div className="mt-20 sm:mt-24 space-y-4">
+            <div className="mt-16 sm:mt-20 md:mt-24 space-y-4">
               <div className="flex items-center gap-3 sm:gap-4">
                 <div className="h-[1px] flex-1 bg-foreground opacity-10" />
-                <span className="text-foreground text-[10px] tracking-[0.2em] opacity-30 font-mono">
+                <span className="text-foreground text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] opacity-30 font-mono whitespace-nowrap">
                   END OF ARCHIVE
                 </span>
                 <div className="h-[1px] flex-1 bg-foreground opacity-10" />
               </div>
               
-              <div className="text-center text-foreground opacity-20 text-[10px] tracking-[0.2em] font-mono">
+              <div className="text-center text-foreground opacity-20 text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] font-mono">
                 {filteredProjects.length} ENTRIES
               </div>
             </div>

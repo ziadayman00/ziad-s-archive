@@ -1,15 +1,14 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-
 import { usePathname } from "next/navigation";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const pathname = usePathname();
 
-  // Hide on admin pages
-  if (pathname?.startsWith('/admin')) return null;
+  // Only show on home page
+  if (pathname !== '/') return null;
 
   const socialLinks = [
     {
