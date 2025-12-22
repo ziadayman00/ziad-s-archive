@@ -58,6 +58,7 @@ const ProjectsSection: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [clickedProjectId, setClickedProjectId] = useState<string | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState<number>(0);
 
   useEffect(() => {
     fetchCategories();
@@ -83,7 +84,6 @@ const ProjectsSection: React.FC = () => {
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
-      // Use default categories if API fails
       setCategories([
         { id: 'featured', name: 'Featured', slug: 'featured' },
         { id: 'web', name: 'Web', slug: 'web' },
@@ -95,7 +95,6 @@ const ProjectsSection: React.FC = () => {
     try {
       setLoading(true);
       
-      // Fetch from API
       let apiProjects: Project[] = [];
       try {
         const res = await fetch('/api/projects');
@@ -106,11 +105,9 @@ const ProjectsSection: React.FC = () => {
         console.error('Error fetching API projects:', error);
       }
 
-      // Get JSON projects
       const data = projectsData as ProjectsData;
       const jsonProjects: Project[] = [];
 
-      // Convert featured projects
       data.featuredProjects.forEach((project, index) => {
         jsonProjects.push({
           id: `json-featured-${index}`,
@@ -119,7 +116,6 @@ const ProjectsSection: React.FC = () => {
         });
       });
 
-      // Convert web projects
       data.webProjects.forEach((project, index) => {
         jsonProjects.push({
           id: `json-web-${index}`,
@@ -128,7 +124,6 @@ const ProjectsSection: React.FC = () => {
         });
       });
 
-      // Merge both sources (remove duplicates by title)
       const allProjects = [...apiProjects];
       jsonProjects.forEach(jsonProject => {
         const exists = allProjects.some(p => p.title === jsonProject.title);
@@ -149,7 +144,6 @@ const ProjectsSection: React.FC = () => {
     if (activeCategory === 'all') {
       return;
     }
-    // Filter is handled in the render
   };
 
   const filteredProjects = activeCategory === 'all' 
@@ -169,17 +163,17 @@ const ProjectsSection: React.FC = () => {
   };
 
   const getStatusLabel = (project: Project): string => {
-    if (project.comingSoon) return "COMING SOON";
-    if (project.inProgress) return "IN PROGRESS";
+    if (project.comingSoon) return "SOON";
+    if (project.inProgress) return "WIP";
     return "LIVE";
   };
 
   const getStatusStyle = (project: Project): string => {
     if (project.comingSoon) {
-      return "border border-foreground border-opacity-30 text-foreground opacity-50";
+      return "bg-foreground/10 text-foreground/50";
     }
     if (project.inProgress) {
-      return "border border-foreground border-opacity-50 text-foreground opacity-70";
+      return "bg-foreground/20 text-foreground/70";
     }
     return "bg-foreground text-background";
   };
@@ -191,27 +185,33 @@ const ProjectsSection: React.FC = () => {
   };
 
   const getProjectLink = (project: Project): string => {
-    // If it's from JSON (has json- prefix), use title
     if (project.id.startsWith('json-')) {
       return `/project/${encodeURIComponent(project.title)}`;
     }
-    // If it's from database, use ID
     return `/project/${project.id}`;
   };
 
   const handleProjectClick = (e: React.MouseEvent, project: Project) => {
     e.preventDefault();
     setClickedProjectId(project.id);
+    setLoadingProgress(0);
     
-    // Navigate after animation
-    setTimeout(() => {
-      window.location.href = getProjectLink(project);
-    }, 600);
-  };
-
-  const getTechLabel = (project: Project): string => {
-    const isDesign = project.category?.slug === 'design' || project.category?.slug === 'branding';
-    return isDesign ? 'TOOLS' : 'TECH STACK';
+    const duration = 800;
+    const steps = 60;
+    const increment = 100 / steps;
+    let currentStep = 0;
+    
+    const progressInterval = setInterval(() => {
+      currentStep++;
+      setLoadingProgress(prev => Math.min(prev + increment, 100));
+      
+      if (currentStep >= steps) {
+        clearInterval(progressInterval);
+        setTimeout(() => {
+          window.location.href = getProjectLink(project);
+        }, 100);
+      }
+    }, duration / steps);
   };
 
   return (
@@ -261,52 +261,37 @@ const ProjectsSection: React.FC = () => {
 
           {/* Archive Stats */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono">
-            <span>TOTAL: {filteredProjects.length} PROJECTS</span>
+            <span>TOTAL: {filteredProjects.length}</span>
             <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline">CATEGORY: {getCategoryLabel(activeCategory)}</span>
+            <span className="hidden sm:inline">FILTER: {getCategoryLabel(activeCategory)}</span>
           </div>
         </div>
 
-        {/* Filter Tabs - Archive Style */}
+        {/* Filter Tabs - Minimalist */}
         <div className="mb-12 md:mb-16">
-          <div className="text-foreground opacity-40 text-[10px] tracking-[0.2em] font-mono mb-4">
-            FILTER BY CLASSIFICATION
-          </div>
-          <div className="flex flex-wrap gap-2 sm:gap-3">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setActiveCategory("all")}
-              className={`relative px-5 sm:px-6 py-2.5 sm:py-3 text-xs font-bold tracking-[0.15em] transition-all duration-300 ${
+              className={`px-4 py-2 text-[10px] font-mono tracking-[0.15em] transition-all duration-300 ${
                 activeCategory === "all"
                   ? "bg-foreground text-background"
-                  : "border border-foreground border-opacity-30 text-foreground hover:border-opacity-50"
+                  : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10 hover:text-foreground"
               }`}
             >
-              <span className="relative z-10">ALL PROJECTS</span>
-              {activeCategory === "all" && (
-                <>
-                  <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-background opacity-50" />
-                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-background opacity-50" />
-                </>
-              )}
+              ALL
             </button>
             
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.slug)}
-                className={`relative px-5 sm:px-6 py-2.5 sm:py-3 text-xs font-bold tracking-[0.15em] transition-all duration-300 ${
+                className={`px-4 py-2 text-[10px] font-mono tracking-[0.15em] transition-all duration-300 ${
                   activeCategory === category.slug
                     ? "bg-foreground text-background"
-                    : "border border-foreground border-opacity-30 text-foreground hover:border-opacity-50"
+                    : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10 hover:text-foreground"
                 }`}
               >
-                <span className="relative z-10">{category.name.toUpperCase()}</span>
-                {activeCategory === category.slug && (
-                  <>
-                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-background opacity-50" />
-                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-background opacity-50" />
-                  </>
-                )}
+                {category.name.toUpperCase()}
               </button>
             ))}
           </div>
@@ -329,8 +314,8 @@ const ProjectsSection: React.FC = () => {
           </div>
         ) : (
           <>
-            {/* Projects Archive List */}
-            <div className="space-y-0 border-t border-foreground border-opacity-10">
+            {/* Projects Archive List - Sleeker Design */}
+            <div className="space-y-px">
               {filteredProjects.map((project, index) => (
                 <a
                   key={project.id}
@@ -338,123 +323,138 @@ const ProjectsSection: React.FC = () => {
                   onClick={(e) => handleProjectClick(e, project)}
                   onMouseEnter={() => handleMouseEnter(index)}
                   onMouseLeave={handleMouseLeave}
-                  className={`block group relative border-b border-foreground border-opacity-10 transition-all duration-500 cursor-pointer overflow-hidden ${
-                    clickedProjectId === project.id
-                      ? 'bg-foreground/10 scale-[0.98]'
-                      : 'hover:bg-foreground/5'
-                  }`}
+                  className={`block group relative transition-all duration-300 cursor-pointer overflow-hidden ${
+                    hoveredProject === index ? 'bg-foreground/[0.02]' : ''
+                  } ${clickedProjectId === project.id ? 'bg-foreground/5' : ''}`}
                 >
-                  {/* Loading bar animation on click */}
+                  {/* Enhanced Loading Animation */}
                   {clickedProjectId === project.id && (
-                    <div className="absolute top-0 left-0 h-1 bg-foreground animate-[loading_0.6s_ease-in-out]" 
-                         style={{
-                           width: '100%',
-                           animation: 'loading 0.6s ease-in-out'
-                         }} 
-                    />
+                    <>
+                      <div 
+                        className="absolute top-0 left-0 h-[2px] bg-foreground transition-all duration-100 ease-linear z-20"
+                        style={{ width: `${loadingProgress}%` }}
+                      />
+                      
+                      <div className="absolute inset-0 z-10">
+                        <div 
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent"
+                          style={{
+                            animation: 'shimmer 1s infinite',
+                            transform: `translateX(${loadingProgress - 100}%)`
+                          }}
+                        />
+                      </div>
+                      
+                      <div className="absolute inset-0 flex items-center justify-center z-30 bg-background/80 backdrop-blur-sm">
+                        <div className="text-center space-y-2">
+                          <div className="flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 bg-foreground rounded-full animate-pulse" />
+                            <span className="text-foreground text-xs font-mono tracking-[0.2em]">
+                              LOADING
+                            </span>
+                            <div className="w-1.5 h-1.5 bg-foreground rounded-full animate-pulse animation-delay-200" />
+                          </div>
+                          <div className="text-foreground opacity-60 text-[10px] font-mono">
+                            {Math.round(loadingProgress)}%
+                          </div>
+                        </div>
+                      </div>
+                    </>
                   )}
                   
                   <style jsx>{`
-                    @keyframes loading {
-                      from {
-                        width: 0%;
-                      }
-                      to {
-                        width: 100%;
-                      }
+                    @keyframes shimmer {
+                      0% { transform: translateX(-100%); }
+                      100% { transform: translateX(100%); }
+                    }
+                    .animation-delay-200 {
+                      animation-delay: 200ms;
                     }
                   `}</style>
-                  {/* Main Row */}
-                  <div className={`py-5 sm:py-6 md:py-7 grid grid-cols-12 gap-3 sm:gap-4 md:gap-6 items-start md:items-center transition-all duration-300 ${
-                    clickedProjectId === project.id ? 'opacity-60 blur-[2px]' : ''
+
+                  {/* Main Row - Thinner & Reordered */}
+                  <div className={`py-4 sm:py-5 grid grid-cols-12 gap-3 sm:gap-4 md:gap-6 items-center transition-all duration-300 border-b border-foreground/5 ${
+                    clickedProjectId === project.id ? 'opacity-0' : ''
                   }`}>
-                    {/* Archive Index */}
-                    <div className="col-span-2 sm:col-span-2 md:col-span-1 flex flex-col gap-1">
-                      <span className="text-foreground opacity-30 group-hover:opacity-100 text-sm sm:text-base font-mono transition-opacity duration-300">
+                    
+                    {/* Index + Year */}
+                    <div className="col-span-2 sm:col-span-1 flex items-center gap-2">
+                      <span className="text-foreground/30 group-hover:text-foreground/100 text-sm font-mono transition-all duration-300">
                         {String(index + 1).padStart(2, "0")}
                       </span>
-                      <div className="hidden md:block w-full h-[1px] bg-foreground opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
                     </div>
 
-                    {/* Project Title & Info */}
-                    <div className="col-span-10 sm:col-span-10 md:col-span-5 space-y-2">
-                      <div className="flex items-center gap-2 mb-1">
+                    {/* Title & Category */}
+                    <div className="col-span-10 sm:col-span-5 md:col-span-4">
+                      <div className="flex items-center gap-2 mb-0.5">
                         {project.category && (
-                          <>
-                            <span className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono">
-                              {project.category.name.toUpperCase()}
-                            </span>
-                            <div className="w-px h-2 bg-foreground opacity-20" />
-                          </>
+                          <span className="text-foreground/30 text-[9px] tracking-[0.12em] font-mono uppercase">
+                            {project.category.name}
+                          </span>
                         )}
-                        <span className="text-foreground opacity-30 text-[9px] tracking-[0.15em] font-mono">
+                        <span className="text-foreground/20 text-[9px]">•</span>
+                        <span className="text-foreground/30 text-[9px] tracking-[0.12em] font-mono">
                           {project.year}
                         </span>
                       </div>
-                      <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground tracking-tight leading-tight group-hover:translate-x-2 transition-transform duration-300">
+                      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight leading-tight group-hover:translate-x-1 transition-transform duration-300">
                         {project.title}
                       </h3>
-                      <p className="text-xs sm:text-sm text-foreground opacity-50 leading-relaxed">
-                        {project.subtitle}
-                      </p>
-                      
-                      {/* Tech Pills - Mobile */}
-                      <div className="flex flex-wrap gap-1.5 pt-2 md:hidden">
-                        {project.tech.slice(0, 3).map((tech, i) => (
-                          <span
-                            key={i}
-                            className="text-[9px] px-2 py-1 border border-foreground border-opacity-20 text-foreground opacity-60 font-mono"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                        {project.tech.length > 3 && (
-                          <span className="text-[9px] px-2 py-1 text-foreground opacity-40 font-mono">
-                            +{project.tech.length - 3}
-                          </span>
-                        )}
-                      </div>
                     </div>
 
-                    {/* Tech Stack - Desktop */}
-                    <div className="hidden md:block col-span-3 space-y-1.5">
-                      <p className="text-foreground opacity-30 text-[10px] tracking-[0.15em] font-mono">
-                        {getTechLabel(project)}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {project.tech.slice(0, 4).map((tech, i) => (
-                          <span
-                            key={i}
-                            className="text-[10px] px-2 py-1 border border-foreground border-opacity-20 text-foreground opacity-60 font-mono"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                        {project.tech.length > 4 && (
-                          <span className="text-[10px] px-2 py-1 text-foreground opacity-40 font-mono">
-                            +{project.tech.length - 4}
-                          </span>
-                        )}
-                      </div>
+                    {/* Tech Stack - Compact */}
+                    <div className="hidden md:flex col-span-3 items-center gap-1.5">
+                      {project.tech.slice(0, 3).map((tech, i) => (
+                        <span
+                          key={i}
+                          className="text-[9px] px-2 py-0.5 bg-foreground/5 text-foreground/50 font-mono"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {project.tech.length > 3 && (
+                        <span className="text-[9px] text-foreground/30 font-mono">
+                          +{project.tech.length - 3}
+                        </span>
+                      )}
                     </div>
 
-                    {/* Sector */}
-                    <div className="col-span-6 sm:col-span-5 md:col-span-2 space-y-1">
-                      <p className="text-foreground opacity-30 text-[10px] tracking-[0.15em] font-mono">
-                        SECTOR
-                      </p>
-                      <p className="text-foreground text-xs sm:text-sm opacity-70 font-medium">
+                    {/* Sector - Compact */}
+                    <div className="hidden lg:block col-span-2">
+                      <span className="text-xs text-foreground/50">
                         {project.sector}
-                      </p>
+                      </span>
                     </div>
 
-                    {/* Status Badge */}
-                    <div className="col-span-6 sm:col-span-5 md:col-span-1 flex justify-end">
+                    {/* Status - Smaller */}
+                    <div className="col-span-12 sm:col-span-5 md:col-span-2 flex justify-end">
                       <span
-                        className={`text-[9px] sm:text-[10px] px-2 sm:px-3 py-1 sm:py-1.5 font-bold tracking-[0.1em] whitespace-nowrap ${getStatusStyle(project)}`}
+                        className={`text-[9px] px-2.5 py-1 font-mono tracking-[0.1em] ${getStatusStyle(project)}`}
                       >
                         {getStatusLabel(project)}
                       </span>
+                    </div>
+
+                    {/* Hover indicator */}
+                    <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+
+                  {/* Mobile Tech Stack */}
+                  <div className="md:hidden px-4 pb-3 -mt-1">
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.tech.slice(0, 4).map((tech, i) => (
+                        <span
+                          key={i}
+                          className="text-[9px] px-2 py-0.5 bg-foreground/5 text-foreground/50 font-mono"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {project.tech.length > 4 && (
+                        <span className="text-[9px] text-foreground/30 font-mono">
+                          +{project.tech.length - 4}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </a>
@@ -462,17 +462,17 @@ const ProjectsSection: React.FC = () => {
             </div>
 
             {/* Archive Footer */}
-            <div className="mt-20 sm:mt-24 space-y-6">
+            <div className="mt-20 sm:mt-24 space-y-4">
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="h-[1px] flex-1 bg-foreground opacity-20" />
-                <span className="text-foreground text-[10px] tracking-[0.2em] sm:tracking-[0.3em] opacity-40 font-mono">
+                <div className="h-[1px] flex-1 bg-foreground opacity-10" />
+                <span className="text-foreground text-[10px] tracking-[0.2em] opacity-30 font-mono">
                   END OF ARCHIVE
                 </span>
-                <div className="h-[1px] flex-1 bg-foreground opacity-20" />
+                <div className="h-[1px] flex-1 bg-foreground opacity-10" />
               </div>
               
-              <div className="text-center text-foreground opacity-30 text-[10px] tracking-[0.2em] font-mono">
-                {filteredProjects.length} PROJECTS ARCHIVED
+              <div className="text-center text-foreground opacity-20 text-[10px] tracking-[0.2em] font-mono">
+                {filteredProjects.length} ENTRIES
               </div>
             </div>
           </>

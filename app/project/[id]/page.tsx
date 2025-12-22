@@ -34,31 +34,14 @@ interface ProjectsData {
 
 async function getProject(idOrTitle: string) {
   try {
-    // First, try to get from database by ID
-    const result = await db
-      .select({
-        project: projects,
-        category: categories,
-      })
-      .from(projects)
-      .leftJoin(categories, eq(projects.categoryId, categories.id))
-      .where(eq(projects.id, idOrTitle))
-      .limit(1);
-
-    if (result.length > 0) {
-      return {
-        ...result[0].project,
-        category: result[0].category,
-      };
-    }
-
-    // If not found in database, try to find in JSON by title
-    const decodedTitle = decodeURIComponent(idOrTitle);
+    const decodedParam = decodeURIComponent(idOrTitle);
+    
+    // First check if it's a JSON project by looking for title match
     const data = projectsData as ProjectsData;
     
     // Search in featured projects
     const featuredProject = data.featuredProjects.find(
-      p => p.title.toLowerCase() === decodedTitle.toLowerCase()
+      p => p.title.toLowerCase() === decodedParam.toLowerCase()
     );
     
     if (featuredProject) {
@@ -75,7 +58,7 @@ async function getProject(idOrTitle: string) {
 
     // Search in web projects
     const webProject = data.webProjects.find(
-      p => p.title.toLowerCase() === decodedTitle.toLowerCase()
+      p => p.title.toLowerCase() === decodedParam.toLowerCase()
     );
     
     if (webProject) {
@@ -87,6 +70,24 @@ async function getProject(idOrTitle: string) {
         order: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
+      };
+    }
+
+    // If not found in JSON, try database by ID
+    const result = await db
+      .select({
+        project: projects,
+        category: categories,
+      })
+      .from(projects)
+      .leftJoin(categories, eq(projects.categoryId, categories.id))
+      .where(eq(projects.id, decodedParam))
+      .limit(1);
+
+    if (result.length > 0) {
+      return {
+        ...result[0].project,
+        category: result[0].category,
       };
     }
 
