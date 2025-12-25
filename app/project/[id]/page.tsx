@@ -107,6 +107,18 @@ export default async function ProjectPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-foreground selection:text-background">
+      {/* Back Button */}
+      <Link 
+        href="/#projects" 
+        className="fixed top-20 sm:top-24 left-4 sm:left-6 lg:left-12 z-40 group flex items-center gap-2 px-3 py-1.5 bg-background/90 backdrop-blur-sm border border-foreground/10 hover:border-foreground/30 transition-all rounded-full"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 sm:w-4 sm:h-4 group-hover:-translate-x-0.5 transition-transform">
+          <path d="M19 12H5"/>
+          <path d="M12 19l-7-7 7-7"/>
+        </svg>
+        <span className="text-[10px] sm:text-xs font-mono tracking-widest opacity-60 group-hover:opacity-100">BACK</span>
+      </Link>
+
       {/* Status Badges - Positioned below main navbar */}
       {(project.inProgress || project.comingSoon) && (
         <div className="fixed top-20 sm:top-24 right-4 sm:right-6 lg:right-12 z-40 flex items-center gap-2">

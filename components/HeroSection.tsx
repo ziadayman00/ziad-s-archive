@@ -1,30 +1,14 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 const HeroSection = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const [currentRole, setCurrentRole] = useState(0);
-  const [scanlinePosition, setScanlinePosition] = useState(0);
-  const heroRef = useRef(null);
 
   const roles = ["FRONTEND", "CREATIVE", "FULLSTACK"];
 
   useEffect(() => {
     setIsVisible(true);
-
-    const handleMouseMove = (e: any) => {
-      // Throttle mouse movement for performance
-      requestAnimationFrame(() => {
-        setMousePosition({
-          x: (e.clientX / window.innerWidth - 0.5) * 15,
-          y: (e.clientY / window.innerHeight - 0.5) * 15,
-        });
-      });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   // Role rotation
@@ -35,21 +19,12 @@ const HeroSection = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Scanline animation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setScanlinePosition((prev) => (prev >= 100 ? 0 : prev + 0.5));
-    }, 50);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section 
-      ref={heroRef}
-      className="relative min-h-screen flex items-center mt-6 justify-center overflow-hidden bg-[#1a1a1a] px-4 sm:px-6 lg:px-12 xl:px-16"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#1a1a1a] px-4 sm:px-6 lg:px-12 xl:px-16"
     >
-      {/* Subtle Grid Background with Fade */}
-      <div className="absolute inset-0 opacity-[0.04]">
+      {/* Subtle Grid Background */}
+      <div className="absolute inset-0 opacity-[0.02]">
         <div
           className="h-full w-full"
           style={{
@@ -61,153 +36,74 @@ const HeroSection = () => {
         />
       </div>
 
-      {/* Corner Archive Labels - Below Navbar */}
-      <div className="absolute top-28 sm:top-32 left-4 sm:left-6 lg:left-12 xl:left-16 text-[#e8e6e0] opacity-30 text-[10px] sm:text-xs tracking-[0.3em] font-mono">
-        <div>ARCHIVE.2025</div>
-        <div className="mt-1 text-[8px] sm:text-[10px]">—————————</div>
-      </div>
-      <div className="absolute top-28 sm:top-32 right-4 sm:right-6 lg:right-12 xl:right-16 text-[#e8e6e0] opacity-30 text-[10px] sm:text-xs tracking-[0.3em] font-mono text-right">
-        <div>PORTFOLIO.V4</div>
-        <div className="mt-1 text-[8px] sm:text-[10px]">—————————</div>
+      {/* Decorative Gradient Blurs - Simplified */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-white/[0.02] blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-white/[0.02] blur-[120px] rounded-full translate-x-1/2 translate-y-1/2" />
       </div>
 
-      {/* Floating Orbs with Parallax */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute top-[20%] left-[15%] w-48 sm:w-64 h-48 sm:h-64 bg-[#e8e6e0] rounded-full opacity-[0.03] blur-3xl transition-transform duration-300 ease-out"
-          style={{
-            transform: `translate(${mousePosition.x * 1.5}px, ${mousePosition.y * 1.5}px)`,
-          }}
-        />
-        <div
-          className="absolute bottom-[20%] right-[15%] w-64 sm:w-96 h-64 sm:h-96 bg-[#e8e6e0] rounded-full opacity-[0.03] blur-3xl transition-transform duration-300 ease-out"
-          style={{
-            transform: `translate(${-mousePosition.x * 1.2}px, ${-mousePosition.y * 1.2}px)`,
-          }}
-        />
-        <div
-          className="absolute top-[50%] left-[50%] w-32 sm:w-48 h-32 sm:h-48 bg-[#e8e6e0] rounded-full opacity-[0.02] blur-2xl transition-transform duration-300 ease-out"
-          style={{
-            transform: `translate(${mousePosition.x * 0.8}px, ${mousePosition.y * 0.8}px)`,
-          }}
-        />
+      {/* Corner Archive Labels */}
+      <div className="absolute top-24 left-4 sm:left-6 lg:left-12 xl:left-16 text-[#e8e6e0] opacity-30 text-[9px] sm:text-[10px] tracking-[0.25em] font-mono">
+        <div>ARCHIVE.2025</div>
+      </div>
+      <div className="absolute top-24 right-4 sm:right-6 lg:right-12 xl:right-16 text-[#e8e6e0] opacity-30 text-[9px] sm:text-[10px] tracking-[0.25em] font-mono text-right">
+        <div>(2025)</div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-[1600px] py-20 sm:py-24">
-        <div className="space-y-6 sm:space-y-8 md:space-y-12">
-          {/* Archive Label Above Title */}
-         <div
-  className={`transition-all duration-1000 delay-100 ${
-    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-  } mt-16 sm:mt-0`}
->
-            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-6">
-              <div className="w-6 sm:w-8 md:w-12 h-[1px] bg-[#e8e6e0] opacity-40" />
-              <span className="text-[#e8e6e0] opacity-50 text-[9px] sm:text-[10px] md:text-xs tracking-[0.25em] sm:tracking-[0.3em] font-mono whitespace-nowrap">
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto pt-20">
+        <div className="space-y-8 sm:space-y-12">
+          
+          {/* Top Label */}
+          <div className={`transition-all duration-1000 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-[1px] bg-[#e8e6e0] opacity-30" />
+              <span className="text-[#e8e6e0]/60 text-xs tracking-[0.2em] font-mono">
                 {roles[currentRole]} DEVELOPER
               </span>
             </div>
           </div>
 
-          {/* Main Heading - Optimized for Mobile */}
-          <div
-            className={`transition-all duration-1000 delay-300 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <h1 className="text-[clamp(2.5rem,11vw,9rem)] font-black text-[#e8e6e0] leading-[0.9] tracking-[-0.02em]">
-              <span className="inline-block relative">
-                BUILDING
-                <span className="absolute -right-1 sm:-right-2 top-0 w-1.5 sm:w-2 h-1.5 sm:h-2 bg-[#e8e6e0] opacity-60" />
-              </span>
-              <br />
-              <span className="inline-block mt-1 sm:mt-2 md:mt-3 relative">
-                CREATIVE
-              </span>
-              <br />
-              <span className="inline-block mt-1 sm:mt-2 md:mt-3 text-foreground ">
-                EXPERIENCES
-              </span>
+          {/* Main Heading */}
+          <div className={`transition-all duration-1000 delay-200 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+            <h1 className="text-[13vw] sm:text-[10vw] lg:text-[8.5vw] font-black text-[#e8e6e0] leading-[0.85] tracking-[-0.04em] mix-blend-difference">
+              <span className="block">BUILDING</span>
+              <span className="block text-[#e8e6e0]/40">DIGITAL</span>
+              <span className="block">EXPERIENCES</span>
             </h1>
           </div>
 
-          {/* Divider Line */}
-          <div
-            className={`transition-all duration-1000 delay-500 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <div className="flex items-center gap-3 sm:gap-4 max-w-2xl">
-              <div className="h-[1px] w-12 sm:w-16 md:w-24 bg-gradient-to-r from-transparent to-[#e8e6e0] opacity-40" />
-              <span className="text-[#e8e6e0] opacity-40 text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] font-mono whitespace-nowrap">
-                EST. 2025
-              </span>
+          {/* Bottom Section: Description & CTA */}
+          <div className={`grid md:grid-cols-12 gap-8 items-end transition-all duration-1000 delay-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+            
+            {/* Description */}
+             <div className="md:col-span-7 lg:col-span-6">
+              <p className="text-[#e8e6e0]/60 text-sm sm:text-base md:text-lg leading-relaxed font-light max-w-lg">
+                Focusing on creating clean, interactive, and motion-driven web experiences that leave a lasting impression.
+              </p>
+            </div>
+
+            {/* CTAs */}
+            <div className="md:col-span-5 lg:col-span-6 flex flex-col sm:flex-row gap-4 md:justify-end">
+              <a
+                href="#projects"
+                className="group relative px-8 py-4 bg-[#e8e6e0] text-[#1a1a1a] text-xs font-bold tracking-[0.2em] transition-transform hover:-translate-y-1"
+              >
+                <span className="relative z-10">SELECTED WORK</span>
+                <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+              </a>
+              
+              <a
+                href="#contact"
+                className="px-8 py-4 border border-[#e8e6e0]/20 text-[#e8e6e0] text-xs font-bold tracking-[0.2em] hover:bg-[#e8e6e0]/5 transition-colors"
+              >
+                GET IN TOUCH
+              </a>
             </div>
           </div>
 
-          {/* Description */}
-          <div
-            className={`max-w-xl lg:max-w-2xl transition-all duration-1000 delay-700 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <p className="text-sm sm:text-base md:text-lg text-[#e8e6e0] opacity-70 leading-relaxed font-light">
-              "Work that lasts, and stories told 
-              <br className="hidden sm:block" />
-without explanation."            </p>
-          </div>
-
-          {/* CTA Buttons */}
-          <div
-            className={`flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 md:gap-6 transition-all duration-1000 delay-900 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <a
-              href="#projects"
-              className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-[#e8e6e0] text-[#1a1a1a] font-bold text-xs sm:text-sm md:text-base tracking-[0.2em] overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 text-center"
-            >
-              <span className="relative z-10">VIEW PROJECTS</span>
-              <div className="absolute inset-0 bg-[#1a1a1a] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
-              <span className="absolute inset-0 flex items-center justify-center text-[#e8e6e0] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-                VIEW PROJECTS
-              </span>
-            </a>
-
-            <a
-              href="#contact"
-              className="group relative px-6 sm:px-8 py-3 sm:py-4 border-2 border-[#e8e6e0] text-[#e8e6e0] font-bold text-xs sm:text-sm md:text-base tracking-[0.2em] transition-all duration-300 hover:bg-[#e8e6e0] hover:text-[#1a1a1a] hover:scale-105 active:scale-95 text-center overflow-hidden"
-            >
-              <span className="relative z-10">GET IN TOUCH</span>
-              <div className="absolute inset-0 border-2 border-[#e8e6e0] transform scale-0 group-hover:scale-100 transition-transform duration-300" />
-            </a>
-          </div>
-
-          {/* Bottom Archive Metadata */}
-          <div
-            className={`pt-6 sm:pt-8 md:pt-12 flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 text-[#e8e6e0] opacity-30 text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] font-mono transition-all duration-1000 delay-1100 ${
-              isVisible ? "opacity-30 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <span>SCROLL TO EXPLORE</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline">AVAILABLE FOR WORK</span>
-          </div>
         </div>
       </div>
-
-
-      <style jsx>{`
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 8s ease infinite;
-        }
-      `}</style>
     </section>
   );
 };

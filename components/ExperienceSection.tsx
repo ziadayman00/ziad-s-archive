@@ -60,7 +60,7 @@ const ExperienceSection: React.FC = () => {
       className="relative min-h-screen bg-background py-24 sm:py-32 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
     >
       {/* Subtle Grid Background */}
-      <div className="absolute inset-0 opacity-[0.03]">
+      <div className="absolute inset-0 opacity-[0.015]">
         <div
           className="h-full w-full"
           style={{

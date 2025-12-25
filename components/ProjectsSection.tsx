@@ -223,10 +223,10 @@ const ProjectsSection: React.FC = () => {
   return (
     <section
       id="projects"
-      className="relative min-h-screen bg-background py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
+      className="relative min-h-screen bg-background py-24 sm:py-32 px-4 sm:px-6 lg:px-12 xl:px-16 overflow-hidden"
     >
       {/* Subtle Grid Background */}
-      <div className="absolute inset-0 opacity-[0.03]">
+      <div className="absolute inset-0 opacity-[0.015]">
         <div
           className="h-full w-full"
           style={{

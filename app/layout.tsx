@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   description: "Creating clean, interactive, and motion-driven web experiences.",
   icons: {
-    icon: "/icon.svg", // Use only this SVG favicon
+    icon: "/icon.svg",
   },
   openGraph: {
     title: "Ziad's Archive",
@@ -35,22 +35,35 @@ export const metadata: Metadata = {
     siteName: "Ziad's Archive",
     images: [
       {
-        url: "https://ziad-s-archive.vercel.app/og-image.jpg",
+        url: "/og-image.png", // Make sure this file exists in /public folder
         width: 1200,
         height: 630,
-        alt: "Ziad's Archive",
+        alt: "Ziad's Archive - Frontend Developer Portfolio",
       },
     ],
     type: "website",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "Ziad's Archive",
     description: "Creating clean, interactive, and motion-driven web experiences.",
-    images: ["https://ziad-s-archive.vercel.app/og-image.png"],
+    images: ["/og-image.png"], // Same file as Open Graph
+    creator: "@zeyad_ayman6",
   },
   alternates: {
     canonical: "https://ziad-s-archive.vercel.app",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
