@@ -318,9 +318,9 @@ export default async function ProjectPage({ params }: PageProps) {
             {/* Images */}
             <div className="space-y-6 sm:space-y-8 lg:space-y-12">
               {project.images.map((img, i) => (
-                <div key={i} className="relative group">
-                  {/* Image Number */}
-                  <div className="absolute -top-8 left-0 text-[10px] font-mono tracking-[0.2em] opacity-30 z-10">
+                <div key={i} className="relative group pt-8">
+                  {/* Image Number - Fixed positioning for mobile */}
+                  <div className="absolute top-0 left-0 text-[10px] font-mono tracking-[0.2em] opacity-30">
                     {String(i + 1).padStart(2, '0')} / {String(project.images.length).padStart(2, '0')}
                   </div>
                   
