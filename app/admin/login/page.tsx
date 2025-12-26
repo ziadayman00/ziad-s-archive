@@ -51,6 +51,15 @@ export default function AdminLogin() {
         />
       </div>
 
+      {/* Back to Home Button */}
+      <button
+        onClick={() => router.push('/')}
+        className="absolute top-6 left-6 flex items-center gap-2 text-foreground opacity-40 hover:opacity-70 transition-opacity group"
+      >
+        <div className="w-6 h-[1px] bg-foreground transition-all group-hover:w-8" />
+        <span className="text-xs tracking-[0.2em] font-mono">BACK TO HOME</span>
+      </button>
+
       <div className="relative z-10 w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-12">

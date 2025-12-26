@@ -9,9 +9,6 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Hide on admin pages
-  if (pathname?.startsWith('/admin')) return null;
-
   // Simple scroll detection - no hide/show behavior
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +31,9 @@ const Navbar = () => {
       document.body.style.overflow = "unset";
     };
   }, [isMenuOpen]);
+
+  // Hide on admin pages - MOVED AFTER ALL HOOKS
+  if (pathname?.startsWith('/admin')) return null;
 
   const handleMenuClick = () => {
     setIsMenuOpen(!isMenuOpen);
