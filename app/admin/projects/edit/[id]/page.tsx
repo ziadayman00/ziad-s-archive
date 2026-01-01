@@ -52,8 +52,8 @@ export default function EditProject() {
     description: '',
     features: [] as string[],
     images: [] as string[],
-    live: '#',
-    github: '#',
+    live: '',
+    github: '',
     comingSoon: false,
     inProgress: false,
     categoryId: '',
@@ -95,8 +95,8 @@ export default function EditProject() {
         description: project.description,
         features: project.features || [],
         images: project.images || [],
-        live: project.live || '#',
-        github: project.github || '#',
+        live: project.live || '',
+        github: project.github || '',
         comingSoon: project.comingSoon || false,
         inProgress: project.inProgress || false,
         categoryId: project.categoryId || '',
@@ -435,7 +435,7 @@ export default function EditProject() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
-                    {isDesignCategory ? 'PROJECT LINK' : 'LIVE URL'}
+                    {isDesignCategory ? 'PROJECT LINK (OPTIONAL)' : 'LIVE URL (OPTIONAL)'}
                   </label>
                   <input
                     type="url"
@@ -449,7 +449,7 @@ export default function EditProject() {
                 {!isDesignCategory && (
                   <div>
                     <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
-                      GITHUB URL
+                      GITHUB URL (OPTIONAL)
                     </label>
                     <input
                       type="url"

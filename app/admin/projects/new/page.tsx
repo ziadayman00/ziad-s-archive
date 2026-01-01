@@ -28,8 +28,8 @@ export default function NewProject() {
     description: '',
     features: [] as string[],
     images: [] as string[],
-    live: '#',
-    github: '#',
+    live: '',
+    github: '',
     comingSoon: false,
     inProgress: false,
     categoryId: '',
@@ -371,7 +371,7 @@ export default function NewProject() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
-                    {isDesignCategory ? 'PROJECT LINK' : 'LIVE URL'}
+                    {isDesignCategory ? 'PROJECT LINK (OPTIONAL)' : 'LIVE URL (OPTIONAL)'}
                   </label>
                   <input
                     type="url"
@@ -385,7 +385,7 @@ export default function NewProject() {
                 {!isDesignCategory && (
                   <div>
                     <label className="block text-foreground text-[10px] sm:text-xs tracking-[0.2em] opacity-40 font-mono mb-2 sm:mb-3">
-                      GITHUB URL
+                      GITHUB URL (OPTIONAL)
                     </label>
                     <input
                       type="url"
